@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import KenteDivider from '../components/ui/KenteDivider'
 
 const FALLBACK_POSTS = [
   {
@@ -82,24 +83,29 @@ export default function Blog() {
   return (
     <>
       {/* Header */}
-      <section className="pt-32 pb-16 bg-earth-900 relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=60')` }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="badge bg-brand-500/20 text-brand-300 border border-brand-400/30 mb-4">Blog & Stories</span>
+      <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
+        <div className="absolute inset-0 adinkra-bg opacity-50 pointer-events-none" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
+          </div>
+          <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+            Blog & Stories
+          </span>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
             Our Stories
           </h1>
-          <p className="text-earth-300 text-lg max-w-2xl mx-auto">
+          <p className="text-forest-200 text-lg max-w-2xl mx-auto">
             News, insights, and stories from the heart of Ghana's craft industry.
           </p>
         </div>
+        <KenteDivider height={10} />
       </section>
 
       {/* Category Tabs */}
-      <div className="sticky top-16 md:top-20 z-30 bg-white border-b border-earth-100 shadow-sm">
+      <div className="sticky top-0 z-30 bg-white border-b border-sand-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button
@@ -107,8 +113,8 @@ export default function Blog() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === cat
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-earth-100 text-earth-600 hover:bg-earth-200'
+                  ? 'bg-forest-700 text-white'
+                  : 'bg-sand-100 text-sand-600 hover:bg-sand-200'
               }`}
             >
               {cat}
@@ -117,7 +123,7 @@ export default function Blog() {
         </div>
       </div>
 
-      <section className="py-16 bg-earth-50 min-h-[60vh]">
+      <section className="py-16 kente-weave-bg min-h-[60vh]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="space-y-6">

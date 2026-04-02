@@ -1,82 +1,102 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Users, Globe, Heart, Leaf } from 'lucide-react'
+import KenteDivider from '../components/ui/KenteDivider'
+import { Adinkrahene, GyeNyame, Sankofa, Dwennimmen } from '../components/ui/AdinkraSymbol'
 
 const milestones = [
-  { year: '2004', event: 'Geolicrafts founded in Accra with 5 artisans by George Akologo.' },
-  { year: '2010', event: 'Expanded product range to include Bolga baskets, wood carvings, and textiles.' },
-  { year: '2015', event: 'Reached 45+ skilled artisans; began exporting to Europe and the USA.' },
-  { year: '2021', event: 'Exported handicraft products worth 771,000 euros — 3% of Ghana\'s total exports.' },
-  { year: '2023', event: 'Opened Dodowa Training Centre with $1M+ grant from Invest For Employment.' },
-  { year: 'Today', event: 'Serving global markets, training 2,000+ artisans, and championing Ghanaian craft culture.' },
+  { year: '2004', event: 'Geolicrafts founded in Accra\'s Burman Camp by George Akologo with 5 artisans.', color: 'bg-accra-500' },
+  { year: '2008', event: 'Expanded product range to include Bolga baskets, Akuaba carvings, and kente textiles.', color: 'bg-kente-400' },
+  { year: '2015', event: 'Grew to 45+ artisans; began exporting regularly to Europe and the United States.', color: 'bg-forest-600' },
+  { year: '2021', event: 'Exported products worth 771,000 euros — representing ~3% of Ghana\'s total handicraft exports.', color: 'bg-accra-600' },
+  { year: '2023', event: 'Opened Dodowa Training Centre with $1M+ grant from Invest For Employment.', color: 'bg-kente-500' },
+  { year: 'Today', event: 'Serving global markets, training 2,000+ artisans, championing Ghana\'s craft heritage worldwide.', color: 'bg-forest-700' },
 ]
 
 const values = [
   {
     icon: Award,
+    symbol: GyeNyame,
+    symbolName: 'Gye Nyame',
+    symbolMeaning: '"Except God"',
     title: 'Quality Craftsmanship',
     description: 'Every product meets stringent standards before leaving our workshop. We never compromise on the quality that defines Ghanaian craft.',
   },
   {
     icon: Heart,
+    symbol: Dwennimmen,
+    symbolName: 'Dwennimmen',
+    symbolMeaning: '"Humility & Strength"',
     title: 'Community Empowerment',
     description: 'We create sustainable livelihoods for rural youth and women through skills training and fair employment.',
   },
   {
     icon: Globe,
+    symbol: Sankofa,
+    symbolName: 'Sankofa',
+    symbolMeaning: '"Go back and fetch it"',
     title: 'Global Reach',
     description: '90% of our products are exported internationally, bringing authentic African culture to homes around the world.',
   },
   {
     icon: Leaf,
+    symbol: Adinkrahene,
+    symbolName: 'Adinkrahene',
+    symbolMeaning: '"Greatness & Leadership"',
     title: 'Sustainable Practice',
-    description: 'We use locally sourced, sustainable materials and support eco-friendly production methods across all our craft lines.',
-  },
-]
-
-const team = [
-  {
-    name: 'George Akologo',
-    role: 'Founder & CEO',
-    bio: 'Originally from Upper East Ghana, George founded Geolicrafts in 2004 with a mission to make Ghanaian craftsmanship a global force.',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80',
+    description: 'We use locally sourced, sustainable materials and support eco-friendly production across all our craft lines.',
   },
 ]
 
 export default function About() {
   return (
     <>
-      {/* Header */}
-      <section className="pt-32 pb-16 bg-earth-900 relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1605812830455-2fadc57dc68d?w=1200&q=60')` }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="badge bg-brand-500/20 text-brand-300 border border-brand-400/30 mb-4">Our Story</span>
+      {/* ─── Header ─── */}
+      <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
+        <div className="absolute inset-0 adinkra-bg opacity-50 pointer-events-none" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-16 pt-10">
+          {/* Ghana flag bar */}
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
+          </div>
+          {/* Adinkra symbol decoration */}
+          <div className="flex justify-center mb-6 opacity-40">
+            <Adinkrahene size={64} color="#F5A200" />
+          </div>
+          <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+            Our Story
+          </span>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
             About Geolicrafts
           </h1>
-          <p className="text-earth-300 text-lg max-w-2xl mx-auto">
-            Two decades of crafting Ghana's cultural heritage — one piece at a time.
+          <p className="text-forest-200 text-lg max-w-2xl mx-auto">
+            Two decades of crafting Ghana's cultural heritage — one chisel stroke, one weave, one drumbeat at a time.
           </p>
         </div>
+        <KenteDivider height={10} />
       </section>
 
-      {/* Founder Story */}
+      {/* ─── Founder Story ─── */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="badge mb-4">The Beginning</span>
+              <span className="badge-green mb-4">The Beginning</span>
               <h2 className="section-title text-left">A Vision Born in Accra</h2>
-              <p className="text-earth-600 leading-relaxed mb-5">
-                In 2004, George Akologo — a craftsman from Ghana's Upper East Region — started Geolicrafts in the Burman Camp area of Accra with just five workers and an unwavering belief: that Ghana's artisans had the talent to serve the world.
+              <p className="text-sand-600 leading-relaxed mb-5">
+                In 2004, George Akologo — a craftsman from Ghana's Upper East Region — started Geolicrafts
+                in Accra's Burman Camp with just five workers and a belief that Ghana's artisans had the talent
+                to serve the world.
               </p>
-              <p className="text-earth-600 leading-relaxed mb-5">
-                What began as a small workshop producing African drums and traditional baskets has grown into one of Ghana's most respected craft exporters. Today, Geolicrafts employs over 45 skilled artisans and exports 90% of its products to Europe, the United States, and beyond.
+              <p className="text-sand-600 leading-relaxed mb-5">
+                Two decades on, Geolicrafts employs 45+ artisans and exports 90% of its products —
+                African drums, Bolga baskets, Akuaba carvings, kente textiles — to Europe, the USA, and beyond.
+                In 2021 alone, our exports were valued at <strong className="text-forest-700">771,000 euros</strong>.
               </p>
-              <p className="text-earth-600 leading-relaxed mb-8">
-                In 2021, the company exported products worth 771,000 euros — representing approximately 3% of Ghana's total handicraft exports. For us, every number behind a product is a person, a family, a community sustained.
+              <p className="text-sand-600 leading-relaxed mb-8 italic border-l-4 border-kente-400 pl-4">
+                "I always believed that our hands — the craft in our hands — could build this nation."
+                <span className="block text-sm text-sand-400 mt-1 not-italic">— George Akologo, Founder & CEO</span>
               </p>
               <Link to="/contact" className="btn-primary">
                 Connect With Us <ArrowRight size={18} />
@@ -88,53 +108,71 @@ export default function About() {
                 alt="Artisans at work"
                 className="rounded-2xl w-full h-[480px] object-cover"
               />
-              <div className="absolute -bottom-6 -left-6 bg-brand-600 text-white rounded-2xl p-6 shadow-xl">
-                <div className="font-display text-4xl font-bold">20+</div>
-                <div className="text-brand-200 text-sm mt-1">Years of Excellence</div>
+              {/* Kente accent on image */}
+              <div className="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
+                <KenteDivider height={8} />
+              </div>
+              <div className="absolute -bottom-6 -left-6 bg-forest-700 text-white rounded-2xl p-6 shadow-xl">
+                <div className="font-display text-4xl font-bold text-kente-300">20+</div>
+                <div className="text-forest-200 text-sm mt-1">Years of Excellence</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-24 bg-earth-50">
+      {/* ─── Kente divider ─── */}
+      <KenteDivider height={10} />
+
+      {/* ─── Values with Adinkra ─── */}
+      <section className="py-24 kente-weave-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="section-title">What We Stand For</h2>
-            <p className="section-subtitle">Our values guide every chisel stroke, every weave, every drum beat.</p>
+            <span className="badge mb-4">Our Values</span>
+            <h2 className="section-title">Guided by Adinkra Wisdom</h2>
+            <p className="section-subtitle">
+              The Adinkra symbols of the Akan people carry timeless truths. Each one mirrors a pillar of how we work.
+            </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map(({ icon: Icon, title, description }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-4">
-                  <Icon size={22} className="text-brand-600" />
+            {values.map(({ symbol: Sym, symbolName, symbolMeaning, title, description }) => (
+              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border-t-4 border-kente-400">
+                <div className="flex justify-center mb-3">
+                  <Sym size={44} color="#006B3F" opacity={0.85} />
                 </div>
-                <h3 className="font-display font-semibold text-lg text-earth-900 mb-2">{title}</h3>
-                <p className="text-earth-500 text-sm leading-relaxed">{description}</p>
+                <p className="text-center text-xs text-kente-600 font-semibold uppercase tracking-wide mb-4">
+                  {symbolName} · <span className="text-sand-400 normal-case font-normal">{symbolMeaning}</span>
+                </p>
+                <h3 className="font-display font-semibold text-lg text-sand-900 mb-2 text-center">{title}</h3>
+                <p className="text-sand-500 text-sm leading-relaxed text-center">{description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* ─── Kente divider ─── */}
+      <KenteDivider height={10} />
+
+      {/* ─── Timeline ─── */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
+            <span className="badge-green mb-4">Sankofa — Look Back to Move Forward</span>
             <h2 className="section-title">Our Journey</h2>
-            <p className="section-subtitle">Two decades of growth, craftsmanship, and community impact.</p>
+            <p className="section-subtitle">Two decades of growth, craftsmanship, and community impact across Ghana.</p>
           </div>
           <div className="relative">
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-brand-100" />
+            {/* Vertical line in kente gold */}
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accra-500 via-kente-400 to-forest-600" />
             <div className="space-y-8">
-              {milestones.map(({ year, event }) => (
+              {milestones.map(({ year, event, color }) => (
                 <div key={year} className="flex gap-6 items-start">
-                  <div className="w-16 h-16 bg-brand-600 text-white rounded-full flex items-center justify-center text-sm font-bold font-display shrink-0 shadow-md">
+                  <div className={`w-16 h-16 ${color} text-white rounded-full flex items-center justify-center text-xs font-bold font-display shrink-0 shadow-md`}>
                     {year}
                   </div>
-                  <div className="bg-white rounded-xl p-5 shadow-sm flex-1 mt-2">
-                    <p className="text-earth-700 leading-relaxed">{event}</p>
+                  <div className="bg-white rounded-xl p-5 shadow-sm flex-1 mt-2 border-l-4 border-kente-200 hover:border-kente-400 transition-colors">
+                    <p className="text-sand-700 leading-relaxed">{event}</p>
                   </div>
                 </div>
               ))}
@@ -143,36 +181,50 @@ export default function About() {
         </div>
       </section>
 
-      {/* Training Centre */}
-      <section className="py-24 bg-earth-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ─── Training Centre ─── */}
+      <section className="py-24 mudcloth-bg relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0"><KenteDivider height={8} /></div>
+        <div className="absolute bottom-0 inset-x-0"><KenteDivider height={8} /></div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <img
-              src="https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?w=700&q=80"
-              alt="Training Centre"
-              className="rounded-2xl w-full h-[420px] object-cover"
-            />
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1584208632869-05fa2b2a5934?w=700&q=80"
+                alt="Training Centre Dodowa"
+                className="rounded-2xl w-full h-[420px] object-cover"
+              />
+              <div className="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
+                <KenteDivider height={6} />
+              </div>
+            </div>
             <div>
-              <span className="badge mb-4">Dodowa Training Centre</span>
-              <h2 className="section-title text-left">Investing in Ghana's Future</h2>
-              <p className="text-earth-600 leading-relaxed mb-5">
-                With over $1 million in grant funding from Invest For Employment (a German Development Cooperation initiative),
-                Geolicrafts opened a state-of-the-art vocational training centre in Dodowa, Greater Accra Region.
+              <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+                Dodowa Training Centre
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-5">
+                Investing in Ghana's Future
+              </h2>
+              <p className="text-forest-200 leading-relaxed mb-5">
+                With over <strong className="text-kente-400">$1 million in grant funding</strong> from Invest For Employment
+                (German Development Cooperation), Geolicrafts opened a state-of-the-art vocational training centre in Dodowa,
+                Greater Accra Region.
               </p>
-              <p className="text-earth-600 leading-relaxed mb-5">
-                The facility is designed to train approximately 2,000 young people — with a particular focus on rural women — in handicraft creation, sewing, fashion design, and artisan skills.
+              <p className="text-forest-300 leading-relaxed mb-5">
+                The facility trains approximately <strong className="text-kente-400">2,000 young people</strong> — with a focus on rural women —
+                in handicraft creation, sewing, fashion design, and artisan skills.
               </p>
-              <p className="text-earth-600 leading-relaxed mb-8">
-                "Every time we train someone, we are investing in a family. We are investing in a community." — George Akologo
+              <p className="text-kente-300 italic border-l-4 border-kente-500 pl-4 text-sm leading-relaxed mb-8">
+                "Every time we train someone, we are investing in a family. We are investing in a community."
+                <span className="block mt-1 text-forest-400 not-italic">— George Akologo</span>
               </p>
               <div className="flex gap-8">
                 <div>
-                  <div className="font-display text-3xl font-bold text-brand-600">2,000+</div>
-                  <div className="text-earth-500 text-sm">People to be trained</div>
+                  <div className="font-display text-3xl font-bold text-kente-400">2,000+</div>
+                  <div className="text-forest-400 text-sm">People to be trained</div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-brand-600">$1M+</div>
-                  <div className="text-earth-500 text-sm">Grant funding secured</div>
+                  <div className="font-display text-3xl font-bold text-kente-400">$1M+</div>
+                  <div className="text-forest-400 text-sm">Grant funding secured</div>
                 </div>
               </div>
             </div>
@@ -180,27 +232,36 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="py-24">
+      {/* ─── Team ─── */}
+      <section className="py-24 kente-weave-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="section-title">Our Leadership</h2>
-          <p className="section-subtitle mb-12">Driven by passion for craft and community.</p>
+          <span className="badge mb-4">Our Leadership</span>
+          <h2 className="section-title">The People Behind the Craft</h2>
+          <p className="section-subtitle mb-12">Driven by passion for craft, community, and cultural preservation.</p>
           <div className="flex justify-center">
-            {team.map(member => (
-              <div key={member.name} className="max-w-sm text-center">
+            <div className="max-w-sm text-center">
+              <div className="relative inline-block mb-4">
                 <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-32 h-32 rounded-full object-cover mx-auto mb-4 ring-4 ring-brand-100"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80"
+                  alt="George Akologo"
+                  className="w-32 h-32 rounded-full object-cover ring-4 ring-kente-400"
                 />
-                <h3 className="font-display font-bold text-xl text-earth-900">{member.name}</h3>
-                <p className="text-brand-600 font-medium text-sm mb-3">{member.role}</p>
-                <p className="text-earth-500 text-sm leading-relaxed">{member.bio}</p>
+                {/* Kente ring */}
+                <div className="absolute inset-0 rounded-full ring-8 ring-forest-200 opacity-20" />
               </div>
-            ))}
+              <h3 className="font-display font-bold text-xl text-sand-900">George Akologo</h3>
+              <p className="text-forest-700 font-medium text-sm mb-3">Founder & CEO</p>
+              <p className="text-sand-500 text-sm leading-relaxed">
+                Originally from Ghana's Upper East Region, George founded Geolicrafts in 2004 with a mission to make
+                Ghanaian craftsmanship a global force — while keeping its soul firmly rooted in African tradition.
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Bottom kente */}
+      <KenteDivider height={10} />
     </>
   )
 }

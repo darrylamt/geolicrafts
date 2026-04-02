@@ -5,51 +5,114 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
   body {
-    @apply font-sans text-earth-900 bg-white antialiased;
+    @apply font-sans text-sand-900 bg-white antialiased;
     margin: 0;
   }
-  #root {
-    width: 100%;
-    text-align: left;
-  }
-  h1, h2, h3, h4 {
-    @apply font-display;
-  }
+  #root { width: 100%; text-align: left; }
+  h1, h2, h3, h4 { @apply font-display; }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply inline-flex items-center gap-2 bg-forest-700 hover:bg-forest-800 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
   }
   .btn-secondary {
-    @apply inline-flex items-center gap-2 border-2 border-brand-600 text-brand-600 hover:bg-brand-600 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+    @apply inline-flex items-center gap-2 border-2 border-forest-700 text-forest-700 hover:bg-forest-700 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+  }
+  .btn-gold {
+    @apply inline-flex items-center gap-2 bg-kente-400 hover:bg-kente-500 text-sand-950 font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
   }
   .btn-ghost {
-    @apply inline-flex items-center gap-2 text-earth-700 hover:text-brand-600 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply inline-flex items-center gap-2 text-sand-700 hover:text-forest-700 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
   }
   .section-title {
-    @apply font-display text-3xl md:text-4xl font-bold text-earth-900 mb-3;
+    @apply font-display text-3xl md:text-4xl font-bold text-sand-900 mb-3;
   }
   .section-subtitle {
-    @apply text-earth-600 text-lg max-w-2xl mx-auto;
+    @apply text-sand-600 text-lg max-w-2xl mx-auto;
   }
   .card {
     @apply bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden;
   }
   .input-field {
-    @apply w-full border border-earth-200 rounded-lg px-4 py-3 text-earth-900 placeholder-earth-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent transition-all duration-200;
+    @apply w-full border border-sand-200 rounded-lg px-4 py-3 text-sand-900 placeholder-sand-400 focus:outline-none focus:ring-2 focus:ring-kente-400 focus:border-transparent transition-all duration-200;
   }
   .badge {
-    @apply inline-block bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1 rounded-full;
+    @apply inline-block bg-kente-100 text-kente-700 text-xs font-semibold px-3 py-1 rounded-full;
+  }
+  .badge-green {
+    @apply inline-block bg-forest-100 text-forest-700 text-xs font-semibold px-3 py-1 rounded-full;
   }
   .admin-sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-earth-600 hover:bg-brand-50 hover:text-brand-700 font-medium transition-colors duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sand-600 hover:bg-kente-50 hover:text-kente-700 font-medium transition-colors duration-200;
   }
   .admin-sidebar-link.active {
-    @apply bg-brand-100 text-brand-700;
+    @apply bg-kente-100 text-kente-700;
+  }
+
+  /* Kente stripe bar */
+  .kente-bar {
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      #000000 0px, #000000 3px,
+      #F5A200 3px, #F5A200 16px,
+      #006B3F 16px, #006B3F 28px,
+      #CE1126 28px, #CE1126 31px,
+      #F5A200 31px, #F5A200 44px,
+      #000000 44px, #000000 47px,
+      #006B3F 47px, #006B3F 56px
+    );
+  }
+
+  /* Adinkra geometric dot watermark */
+  .adinkra-bg {
+    background-image:
+      radial-gradient(circle, rgba(245,162,0,0.10) 2px, transparent 2px),
+      radial-gradient(circle, rgba(0,107,63,0.06) 1px, transparent 1px);
+    background-size: 40px 40px, 20px 20px;
+    background-position: 0 0, 10px 10px;
+  }
+
+  /* Mud-cloth inspired diagonal pattern */
+  .mudcloth-bg {
+    background-color: #003320;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        rgba(245,162,0,0.08) 0px,
+        rgba(245,162,0,0.08) 2px,
+        transparent 2px,
+        transparent 14px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 2px,
+        transparent 2px,
+        transparent 14px
+      );
+  }
+
+  /* Kente weave section background */
+  .kente-weave-bg {
+    background-color: #faf8f5;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(245,162,0,0.07) 0px,
+        rgba(245,162,0,0.07) 2px,
+        transparent 2px,
+        transparent 20px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0,107,63,0.06) 0px,
+        rgba(0,107,63,0.06) 2px,
+        transparent 2px,
+        transparent 20px
+      );
   }
 }

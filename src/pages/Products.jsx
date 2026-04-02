@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getStorageUrl } from '../lib/supabase'
+import KenteDivider from '../components/ui/KenteDivider'
 
 const FALLBACK_PRODUCTS = [
   { id: 1, name: 'Djembe Drum', category: 'Musical Instruments', description: 'Hand-carved djembe drum made from authentic Ghanaian wood with goat-skin head.', image_url: 'https://images.unsplash.com/photo-1516663235285-845fac339ca7?w=600&q=80' },
@@ -49,26 +50,29 @@ export default function Products() {
   return (
     <>
       {/* Page Header */}
-      <section className="pt-32 pb-16 bg-earth-900 relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1580464135093-36b6bfda896e?w=1200&q=60')` }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="badge bg-brand-500/20 text-brand-300 border border-brand-400/30 mb-4">
+      <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
+        <div className="absolute inset-0 adinkra-bg opacity-50 pointer-events-none" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
+            <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
+          </div>
+          <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
             Handcrafted in Ghana
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
             Our Products
           </h1>
-          <p className="text-earth-300 text-lg max-w-2xl mx-auto">
-            Browse our collection of authentic African arts, musical instruments, and handcrafted gifts — each piece made with skill and cultural pride.
+          <p className="text-forest-200 text-lg max-w-2xl mx-auto">
+            Authentic African arts, musical instruments, and handcrafted gifts — each piece made with skill and cultural pride.
           </p>
         </div>
+        <KenteDivider height={10} />
       </section>
 
       {/* Filters */}
-      <section className="sticky top-16 md:top-20 z-30 bg-white border-b border-earth-100 shadow-sm py-4">
+      <section className="sticky top-0 z-30 bg-white border-b border-sand-100 shadow-sm py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             {/* Search */}
@@ -90,8 +94,8 @@ export default function Products() {
                   onClick={() => setCategory(cat)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     category === cat
-                      ? 'bg-brand-600 text-white'
-                      : 'bg-earth-100 text-earth-600 hover:bg-earth-200'
+                      ? 'bg-forest-700 text-white'
+                      : 'bg-sand-100 text-sand-600 hover:bg-sand-200'
                   }`}
                 >
                   {cat}
@@ -103,7 +107,7 @@ export default function Products() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-16 bg-earth-50 min-h-[60vh]">
+      <section className="py-16 kente-weave-bg min-h-[60vh]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

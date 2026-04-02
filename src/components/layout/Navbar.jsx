@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import KenteDivider from '../ui/KenteDivider'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -24,28 +25,35 @@ export default function Navbar() {
 
   useEffect(() => setOpen(false), [pathname])
 
-  const navBg = isHome && !scrolled
+  const isTransparent = isHome && !scrolled
+
+  const navBg = isTransparent
     ? 'bg-transparent'
-    : 'bg-white shadow-md'
+    : 'bg-forest-950 shadow-lg'
 
-  const textColor = isHome && !scrolled
-    ? 'text-white'
-    : 'text-earth-800'
-
-  const logoColor = isHome && !scrolled
-    ? 'text-white'
-    : 'text-brand-600'
+  const textColor = isTransparent ? 'text-white' : 'text-forest-100'
+  const activeColor = 'text-kente-400'
 
   return (
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${navBg}`}>
+      {/* Kente stripe — only visible when scrolled / not on hero */}
+      {!isTransparent && <KenteDivider height={4} />}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16 md:h-18">
           {/* Logo */}
-          <Link to="/" className={`font-display text-xl font-bold ${logoColor} transition-colors duration-300`}>
-            Geoli<span className="text-brand-400">crafts</span>
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex gap-0.5">
+              <span className="w-2 h-6 rounded-sm bg-accra-500 inline-block" />
+              <span className="w-2 h-6 rounded-sm bg-kente-400 inline-block" />
+              <span className="w-2 h-6 rounded-sm bg-forest-600 inline-block" />
+            </div>
+            <span className={`font-display text-xl font-bold transition-colors duration-300 ${isTransparent ? 'text-white' : 'text-white'}`}>
+              Geoli<span className="text-kente-400">crafts</span>
+            </span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
             {links.map(({ to, label }) => (
               <NavLink
@@ -55,8 +63,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                     isActive
-                      ? 'text-brand-500 font-semibold'
-                      : `${textColor} hover:text-brand-400`
+                      ? `${activeColor} font-semibold`
+                      : `${textColor} hover:text-kente-300`
                   }`
                 }
               >
@@ -76,9 +84,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-earth-100 shadow-lg">
+        <div className="md:hidden bg-forest-950 border-t border-forest-800">
+          {/* Kente stripe in mobile menu */}
+          <KenteDivider height={5} />
           <nav className="flex flex-col px-4 py-4 gap-1">
             {links.map(({ to, label }) => (
               <NavLink
@@ -88,8 +98,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-brand-50 text-brand-600 font-semibold'
-                      : 'text-earth-700 hover:bg-earth-50'
+                      ? 'bg-forest-800 text-kente-400 font-semibold'
+                      : 'text-forest-200 hover:bg-forest-800 hover:text-white'
                   }`
                 }
               >
