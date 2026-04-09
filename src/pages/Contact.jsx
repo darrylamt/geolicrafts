@@ -3,7 +3,6 @@ import { MapPin, Mail, Send, CheckCircle } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 import KenteDivider from '../components/ui/KenteDivider'
-import { Sankofa } from '../components/ui/AdinkraSymbol'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
@@ -36,15 +35,11 @@ export default function Contact() {
     <>
       {/* Header */}
       <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
-        <div className="absolute inset-0 adinkra-bg opacity-50 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
           <div className="flex items-center justify-center gap-2 mb-5">
             <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
             <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
             <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
-          </div>
-          <div className="flex justify-center mb-4 opacity-30">
-            <Sankofa size={48} color="#F5A200" />
           </div>
           <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
             Get In Touch
@@ -70,8 +65,8 @@ export default function Contact() {
                       <MapPin size={18} className="text-forest-700" />
                     </div>
                     <div>
-                      <p className="font-medium text-earth-900 text-sm mb-0.5">Main Office</p>
-                      <p className="text-earth-500 text-sm">Burman Camp, Accra, Ghana</p>
+                      <p className="font-medium text-earth-900 text-sm mb-0.5">Main Office & Training Centre</p>
+                      <p className="text-earth-500 text-sm">Dodowa, Greater Accra Region, Ghana</p>
                     </div>
                   </div>
                   <div className="flex gap-4 items-start">
@@ -79,8 +74,8 @@ export default function Contact() {
                       <MapPin size={18} className="text-forest-700" />
                     </div>
                     <div>
-                      <p className="font-medium text-earth-900 text-sm mb-0.5">Training Centre</p>
-                      <p className="text-earth-500 text-sm">Dodowa, Greater Accra Region, Ghana</p>
+                      <p className="font-medium text-earth-900 text-sm mb-0.5">Phone</p>
+                      <p className="text-earth-500 text-sm">+233 289 553 203<br />+233 244 099 243</p>
                     </div>
                   </div>
                   <div className="flex gap-4 items-center">
@@ -89,8 +84,8 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-medium text-earth-900 text-sm mb-0.5">Email</p>
-                      <a href="mailto:info@geolicrafts.com" className="text-forest-700 text-sm hover:underline">
-                        info@geolicrafts.com
+                      <a href="mailto:info@geolicraftsgh.com" className="text-forest-700 text-sm hover:underline">
+                        info@geolicraftsgh.com
                       </a>
                     </div>
                   </div>

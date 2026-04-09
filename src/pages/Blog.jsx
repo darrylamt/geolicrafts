@@ -4,24 +4,44 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import KenteDivider from '../components/ui/KenteDivider'
 
+// Local images guaranteed to exist — used for both fallback posts and to patch Supabase posts
+const LOCAL_IMAGES = {
+  'geolicrafts-ceo-vision':   '/pics/founder.jpeg',
+  'training-centre-dodowa':   '/pics/ife/group-pic.jpeg',
+  'bolga-baskets-global':     '/pics/workers1.jpeg',
+  'drums-cultural-heritage':  '/pics/process.jpeg',
+}
+const CATEGORY_IMAGES = {
+  'News':      '/pics/founder.jpeg',
+  'Community': '/pics/training.jpeg',
+  'Crafts':    '/pics/process.jpeg',
+}
+const DEFAULT_IMG = '/pics/process.jpeg'
+
+// Guarantee every post has a working image_url
+function withImage(post) {
+  return {
+    ...post,
+    image_url: LOCAL_IMAGES[post.slug] || CATEGORY_IMAGES[post.category] || DEFAULT_IMG,
+  }
+}
+
 const FALLBACK_POSTS = [
   {
     id: 1,
     slug: 'geolicrafts-ceo-vision',
     title: 'Geolicrafts CEO Foresees Handicraft Sector as Catalyst for Ghana\'s Economic Transformation',
-    excerpt: 'Founder George Akologo shares his vision for how the craft industry can drive sustainable economic development in Ghana and across Africa.',
+    excerpt: 'George Akologo shares his bold vision: Ghana\'s craft industry could rival cocoa and gold exports. With 90% of products reaching Europe and the USA, Geolicrafts is already proving it.',
     category: 'News',
-    image_url: 'https://images.unsplash.com/photo-1580464135093-36b6bfda896e?w=800&q=80',
     published_at: '2023-12-08',
     read_time: 5,
   },
   {
     id: 2,
     slug: 'training-centre-dodowa',
-    title: 'New Training Centre in Dodowa to Empower 2,000 Artisans',
-    excerpt: 'With over $1 million in grant funding from Invest For Employment, our Dodowa training facility is set to transform lives through craft skills.',
+    title: 'Inside the Dodowa Training Centre: How Geolicrafts is Building Ghana\'s Next Generation of Artisans',
+    excerpt: 'With $1M+ in funding from Invest For Employment, the Dodowa centre trains 2,000+ rural women and youth in straw work, wood carving, and fashion design — turning craft skills into lasting livelihoods.',
     category: 'Community',
-    image_url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=80',
     published_at: '2023-06-15',
     read_time: 4,
   },
@@ -29,23 +49,21 @@ const FALLBACK_POSTS = [
     id: 3,
     slug: 'bolga-baskets-global',
     title: 'Bolga Baskets: How a Ghanaian Tradition Conquered Global Markets',
-    excerpt: 'The story of how traditional hand-woven baskets from Bolgatanga became one of Ghana\'s most beloved craft exports, shipped to Europe and the Americas.',
+    excerpt: 'Hand-woven by skilled women in the Upper East Region, Bolga baskets have become one of Ghana\'s most beloved craft exports — reaching homes in Europe, the USA, and beyond.',
     category: 'Crafts',
-    image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
     published_at: '2023-03-20',
     read_time: 6,
   },
   {
     id: 4,
     slug: 'drums-cultural-heritage',
-    title: 'The Heartbeat of Ghana: Preserving the Art of Drum-Making',
-    excerpt: 'African drums are more than instruments — they carry the voices of ancestors. Here\'s how Geolicrafts keeps this sacred tradition alive.',
+    title: 'The Heartbeat of Ghana: Preserving the Sacred Art of Drum-Making',
+    excerpt: 'From Djembe to Dundum, every drum Geolicrafts produces is carved by hand using Tweneboa wood and goat skin. Here\'s how this ancient craft stays alive — and finds a global audience.',
     category: 'Crafts',
-    image_url: 'https://images.unsplash.com/photo-1516663235285-845fac339ca7?w=800&q=80',
     published_at: '2022-11-10',
     read_time: 7,
   },
-]
+].map(withImage)
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-GB', {
@@ -69,7 +87,7 @@ export default function Blog() {
       if (error || !data || data.length === 0) {
         setPosts(FALLBACK_POSTS)
       } else {
-        setPosts(data)
+        setPosts(data.map(withImage))
       }
       setLoading(false)
     }
@@ -84,7 +102,6 @@ export default function Blog() {
     <>
       {/* Header */}
       <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
-        <div className="absolute inset-0 adinkra-bg opacity-50 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
           <div className="flex items-center justify-center gap-2 mb-5">
             <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
@@ -146,6 +163,7 @@ export default function Blog() {
                       src={featured.image_url}
                       alt={featured.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }}
                     />
                   </div>
                   <div className="md:w-1/2 p-8 flex flex-col justify-center">
@@ -176,6 +194,7 @@ export default function Blog() {
                           src={post.image_url}
                           alt={post.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }}
                         />
                       </div>
                       <div className="p-6">

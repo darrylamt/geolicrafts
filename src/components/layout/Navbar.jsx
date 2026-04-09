@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
-import KenteDivider from '../ui/KenteDivider'
 
-const links = [
-  { to: '/', label: 'Home' },
-  { to: '/products', label: 'Products' },
-  { to: '/blog', label: 'Blog' },
+const leftLinks = [
+  { to: '/products', label: 'Collections' },
   { to: '/about', label: 'About' },
+]
+
+const rightLinks = [
+  { to: '/blog', label: 'Blog' },
   { to: '/contact', label: 'Contact' },
 ]
+
+const allLinks = [...leftLinks, ...rightLinks]
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -18,7 +21,7 @@ export default function Navbar() {
   const isHome = pathname === '/'
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -27,44 +30,63 @@ export default function Navbar() {
 
   const isTransparent = isHome && !scrolled
 
-  const navBg = isTransparent
-    ? 'bg-transparent'
-    : 'bg-forest-950 shadow-lg'
-
-  const textColor = isTransparent ? 'text-white' : 'text-forest-100'
-  const activeColor = 'text-kente-400'
-
   return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${navBg}`}>
-      {/* Kente stripe — only visible when scrolled / not on hero */}
-      {!isTransparent && <KenteDivider height={4} />}
+    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${isTransparent ? 'bg-transparent' : 'bg-[#F5F0E8] border-b border-[#3B1F0A]/10'}`}>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-18">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex gap-0.5">
-              <span className="w-2 h-6 rounded-sm bg-accra-500 inline-block" />
-              <span className="w-2 h-6 rounded-sm bg-kente-400 inline-block" />
-              <span className="w-2 h-6 rounded-sm bg-forest-600 inline-block" />
-            </div>
-            <span className={`font-display text-xl font-bold transition-colors duration-300 ${isTransparent ? 'text-white' : 'text-white'}`}>
-              Geoli<span className="text-kente-400">crafts</span>
-            </span>
-          </Link>
+      {/* Top utility bar */}
+      <div className="bg-[#3B1F0A] text-[#F5F0E8]/70 text-[11px] tracking-widest uppercase hidden md:block">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center py-1.5">
+          <span>Dodowa, Greater Accra &nbsp;·&nbsp; Est. 2004 &nbsp;·&nbsp; Mon–Sat 8am–5pm</span>
+          <span>+233 289 553 203 &nbsp;·&nbsp; info@geolicraftsgh.com</span>
+        </div>
+      </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {links.map(({ to, label }) => (
+      {/* Main nav */}
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between h-16 md:h-[60px]">
+
+          {/* Left links */}
+          <nav className="hidden md:flex items-center gap-8 flex-1">
+            {leftLinks.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                end={to === '/'}
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                    isActive
-                      ? `${activeColor} font-semibold`
-                      : `${textColor} hover:text-kente-300`
+                  `text-[11px] tracking-widest uppercase font-semibold transition-colors duration-200 ${
+                    isTransparent
+                      ? isActive ? 'text-white' : 'text-white/70 hover:text-white'
+                      : isActive ? 'text-[#C1440E]' : 'text-[#3B1F0A]/60 hover:text-[#3B1F0A]'
+                  }`
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Centered logo */}
+          <Link
+            to="/"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center"
+          >
+            <img
+              src="/logo.png"
+              alt="Geolicrafts"
+              className={`h-10 w-auto transition-all duration-300 ${isTransparent ? 'brightness-0 invert' : ''}`}
+            />
+          </Link>
+
+          {/* Right links */}
+          <nav className="hidden md:flex items-center gap-8 flex-1 justify-end">
+            {rightLinks.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `text-[11px] tracking-widest uppercase font-semibold transition-colors duration-200 ${
+                    isTransparent
+                      ? isActive ? 'text-white' : 'text-white/70 hover:text-white'
+                      : isActive ? 'text-[#C1440E]' : 'text-[#3B1F0A]/60 hover:text-[#3B1F0A]'
                   }`
                 }
               >
@@ -75,31 +97,26 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <button
-            className={`md:hidden p-2 rounded-lg ${textColor}`}
+            className={`md:hidden p-2 ml-auto ${isTransparent ? 'text-white' : 'text-[#3B1F0A]'}`}
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
-            {open ? <X size={24} /> : <Menu size={24} />}
+            {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-forest-950 border-t border-forest-800">
-          {/* Kente stripe in mobile menu */}
-          <KenteDivider height={5} />
-          <nav className="flex flex-col px-4 py-4 gap-1">
-            {links.map(({ to, label }) => (
+        <div className="md:hidden bg-[#F5F0E8] border-t border-[#3B1F0A]/10">
+          <nav className="flex flex-col px-6 py-4 gap-1">
+            {allLinks.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                end={to === '/'}
                 className={({ isActive }) =>
-                  `px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-forest-800 text-kente-400 font-semibold'
-                      : 'text-forest-200 hover:bg-forest-800 hover:text-white'
+                  `py-3 text-[11px] tracking-widest uppercase font-semibold border-b border-[#3B1F0A]/10 transition-colors ${
+                    isActive ? 'text-[#C1440E]' : 'text-[#3B1F0A]/70 hover:text-[#3B1F0A]'
                   }`
                 }
               >
