@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, X, SlidersHorizontal } from 'lucide-react'
+import { Search, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getStorageUrl } from '../lib/supabase'
 import KenteDivider from '../components/ui/KenteDivider'
+
+const PAGE_SIZE = 12
 
 const FALLBACK_PRODUCTS = [
   { id: 1, name: 'Djembe Drum', category: 'Musical Instruments', description: 'Hand-carved djembe drum made from authentic Ghanaian wood with goat-skin head.', image_url: 'https://geolicrafts.com/wp-content/uploads/2023/05/afroton-ads02-djembe-standard-30-32-cm_1_DRU0041870-000-690x690.jpg' },
@@ -22,6 +24,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
+  const [page, setPage] = useState(1)
   const searchRef = useRef()
 
   useEffect(() => {
@@ -43,7 +46,15 @@ export default function Products() {
     return matchesSearch && (category === 'All' || p.category === category)
   })
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const hasActiveFilter = search || category !== 'All'
+
+  const handleFilterChange = (newSearch, newCategory) => {
+    if (newSearch !== undefined) setSearch(newSearch)
+    if (newCategory !== undefined) setCategory(newCategory)
+    setPage(1)
+  }
 
   return (
     <>
@@ -79,12 +90,12 @@ export default function Products() {
               type="text"
               placeholder="Search products..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => handleFilterChange(e.target.value, undefined)}
               className="w-full bg-white border border-[#3B1F0A]/15 rounded-lg pl-9 pr-9 py-2.5 text-sm text-sand-900 placeholder-sand-400 focus:outline-none focus:ring-2 focus:ring-kente-400/50 focus:border-kente-400 transition-all"
             />
             {search && (
               <button
-                onClick={() => { setSearch(''); searchRef.current?.focus() }}
+                onClick={() => { handleFilterChange('', undefined); searchRef.current?.focus() }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-sand-400 hover:text-sand-700"
               >
                 <X size={14} />
@@ -99,7 +110,7 @@ export default function Products() {
             {ALL_CATEGORIES.map(cat => (
               <button
                 key={cat}
-                onClick={() => setCategory(cat)}
+                onClick={() => handleFilterChange(undefined, cat)}
                 className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-200 ${
                   category === cat
                     ? 'bg-[#3B1F0A] text-[#F5A200]'
@@ -134,7 +145,7 @@ export default function Products() {
               <p className="text-sand-500 font-medium mb-1">No products found</p>
               <p className="text-sand-400 text-sm mb-6">Try a different search or category</p>
               <button
-                onClick={() => { setSearch(''); setCategory('All') }}
+                onClick={() => { handleFilterChange('', 'All') }}
                 className="px-5 py-2 bg-[#3B1F0A] text-white text-sm font-medium rounded-lg hover:bg-[#3B1F0A]/80 transition-colors"
               >
                 Clear filters
@@ -150,7 +161,7 @@ export default function Products() {
                 </p>
                 {hasActiveFilter && (
                   <button
-                    onClick={() => { setSearch(''); setCategory('All') }}
+                    onClick={() => handleFilterChange('', 'All')}
                     className="text-xs text-[#C1440E] hover:underline flex items-center gap-1"
                   >
                     <X size={11} /> Clear all
@@ -160,10 +171,55 @@ export default function Products() {
 
               {/* 2-col mobile · 3-col tablet · 4-col desktop */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-                {filtered.map(product => (
+                {paginated.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#3B1F0A]/10">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="flex items-center gap-1.5 text-sm text-[#3B1F0A]/60 hover:text-[#3B1F0A] disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-lg border border-[#3B1F0A]/15 bg-white hover:bg-[#3B1F0A]/5 transition-colors"
+                  >
+                    <ChevronLeft size={15} /> Previous
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                      .reduce((acc, p, idx, arr) => {
+                        if (idx > 0 && p - arr[idx - 1] > 1) acc.push('...')
+                        acc.push(p)
+                        return acc
+                      }, [])
+                      .map((p, i) => (
+                        <button
+                          key={i}
+                          onClick={() => typeof p === 'number' && setPage(p)}
+                          className={`w-9 h-9 text-sm rounded-lg font-medium transition-colors ${
+                            p === page
+                              ? 'bg-[#3B1F0A] text-[#F5A200]'
+                              : typeof p === 'number'
+                              ? 'bg-white border border-[#3B1F0A]/15 text-[#3B1F0A]/60 hover:bg-[#3B1F0A]/5'
+                              : 'text-[#3B1F0A]/30 cursor-default'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ))
+                    }
+                  </div>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="flex items-center gap-1.5 text-sm text-[#3B1F0A]/60 hover:text-[#3B1F0A] disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-lg border border-[#3B1F0A]/15 bg-white hover:bg-[#3B1F0A]/5 transition-colors"
+                  >
+                    Next <ChevronRight size={15} />
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
