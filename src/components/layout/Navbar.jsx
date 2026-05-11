@@ -43,7 +43,7 @@ export default function Navbar() {
 
       {/* Main nav */}
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16 md:h-[60px]">
+        <div className="relative flex items-center justify-between h-16 md:h-[60px]">
 
           {/* Left links */}
           <nav className="hidden md:flex items-center gap-8 flex-1">
@@ -67,12 +67,13 @@ export default function Navbar() {
           {/* Centered logo */}
           <Link
             to="/"
-            className="absolute left-1/2 -translate-x-1/2 flex items-center"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center"
           >
             <img
               src="/logo.png"
               alt="Geolicrafts"
-              className={`h-10 w-auto transition-all duration-300 ${isTransparent ? 'brightness-0 invert' : ''}`}
+              className="h-10 w-auto transition-all duration-300"
+              style={isTransparent ? { filter: 'brightness(0) invert(1)' } : undefined}
             />
           </Link>
 
