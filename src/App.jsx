@@ -18,6 +18,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminBlog from './pages/admin/AdminBlog'
 import AdminMessages from './pages/admin/AdminMessages'
+import AdminImport from './pages/admin/AdminImport'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -63,6 +64,11 @@ function AppRoutes() {
       <Route path="/admin/messages" element={
         <ProtectedRoute>
           <AdminLayout><AdminMessages /></AdminLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/import" element={
+        <ProtectedRoute>
+          <AdminLayout><AdminImport /></AdminLayout>
         </ProtectedRoute>
       } />
 

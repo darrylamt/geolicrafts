@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Package, BookOpen, MessageSquare,
-  LogOut, Menu, X, ChevronRight, ExternalLink
+  LogOut, Menu, X, ChevronRight, ExternalLink, Upload
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/products', icon: Package, label: 'Products' },
+  { to: '/admin/import', icon: Upload, label: 'Bulk Import' },
   { to: '/admin/blog', icon: BookOpen, label: 'Blog Posts' },
   { to: '/admin/messages', icon: MessageSquare, label: 'Messages' },
 ]
