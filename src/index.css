@@ -96,6 +96,10 @@
       );
   }
 
+  /* Hide scrollbar but keep scroll behaviour */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
   /* Kente weave section background */
   .kente-weave-bg {
     background-color: #faf8f5;
