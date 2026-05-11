@@ -67,13 +67,14 @@ export default function Navbar() {
           {/* Centered logo */}
           <Link
             to="/"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center"
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center px-3 py-1.5 rounded-xl transition-all duration-300 ${
+              isTransparent ? 'bg-white/20 backdrop-blur-sm' : ''
+            }`}
           >
             <img
               src="/logo.png"
               alt="Geolicrafts"
-              className="h-10 w-auto transition-all duration-300"
-              style={isTransparent ? { filter: 'brightness(0) invert(1)' } : undefined}
+              className="h-9 w-auto"
             />
           </Link>
 
