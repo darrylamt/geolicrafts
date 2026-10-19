@@ -1,4 +1,4 @@
-/* global process */
+/* global process, Buffer */
 // Branded 1200×630 share image for products and blog posts.
 //   /api/og?type=product&slug=djembe-drum
 //   /api/og?type=post&slug=bolga-baskets-global
