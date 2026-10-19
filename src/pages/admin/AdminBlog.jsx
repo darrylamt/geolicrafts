@@ -10,7 +10,7 @@ const CATEGORIES = ['News', 'Crafts', 'Community', 'Events', 'Training']
 const PAGE_SIZE = 10
 const EMPTY_FORM = {
   title: '', slug: '', excerpt: '', content: '', category: '',
-  image_url: '', published: false, read_time: 3,
+  image_url: '', published: false, published_at: null, read_time: 3,
 }
 
 function slugify(str) {
@@ -62,6 +62,7 @@ export default function AdminBlog() {
     setForm({
       title: p.title, slug: p.slug, excerpt: p.excerpt || '', content: p.content || '',
       category: p.category || '', image_url: p.image_url || '', published: p.published || false,
+      published_at: p.published_at || null,
       read_time: p.read_time || 3,
     })
     setEditId(p.id)
@@ -87,7 +88,8 @@ export default function AdminBlog() {
       image_url: form.image_url,
       published: form.published,
       read_time: Number(form.read_time),
-      published_at: form.published ? new Date().toISOString() : null,
+      // Keep the original publish date when editing; only stamp it the first time a post goes live
+      published_at: form.published ? (form.published_at || new Date().toISOString()) : form.published_at,
     }
     let error
     if (editId) {
@@ -109,7 +111,7 @@ export default function AdminBlog() {
 
   const togglePublish = async (p) => {
     const { error } = await supabase.from('blog_posts')
-      .update({ published: !p.published, published_at: !p.published ? new Date().toISOString() : null })
+      .update({ published: !p.published, published_at: p.published_at || new Date().toISOString() })
       .eq('id', p.id)
     if (error) toast.error('Failed to update')
     else { toast.success(!p.published ? 'Published' : 'Unpublished'); load() }

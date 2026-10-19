@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Download } from 'lucide-react'
+import { useI18n } from '../../i18n'
+import { SITE, whatsappLink } from '../../lib/site'
+import { WhatsAppIcon } from '../ui/WhatsAppButton'
 
 const IconFacebook = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -16,55 +19,65 @@ const IconInstagram = () => (
 )
 
 const nav = [
-  { to: '/products', label: 'Collections' },
-  { to: '/about', label: 'About' },
-  { to: '/blog', label: 'Journal' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/products', key: 'nav.collections' },
+  { to: '/about', key: 'nav.about' },
+  { to: '/blog', key: 'nav.journal' },
+  { to: '/contact', key: 'nav.contact' },
 ]
 
 const social = 'grid place-items-center h-9 w-9 rounded-full ring-1 ring-white/15 text-stone-300 hover:text-white hover:ring-white/40 transition'
 
 export default function Footer() {
+  const { t } = useI18n()
   return (
     <footer className="bg-stone-950 text-stone-400">
-      <div className="container-page pt-20 pb-10">
+      <div className="container-page pt-20 pb-24 sm:pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">
           <div className="lg:col-span-6">
             <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05] max-w-md">
-              Handmade in Ghana, <em className="text-clay-300">shipped worldwide.</em>
+              {t('footer.headline')} <em className="text-clay-300">{t('footer.headlineEm')}</em>
             </h2>
-            <Link to="/contact" className="btn-light mt-8">
-              Start an enquiry <ArrowUpRight size={15} />
-            </Link>
+            <div className="flex flex-wrap gap-2 mt-8">
+              <Link to="/contact" className="btn-light">
+                {t('footer.cta')} <ArrowUpRight size={15} />
+              </Link>
+              <Link to="/catalogue" className="btn-outline-light">
+                <Download size={15} /> {t('footer.catalogue')}
+              </Link>
+            </div>
           </div>
 
           <div className="lg:col-span-3">
-            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">Explore</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">{t('footer.explore')}</p>
             <ul className="space-y-3">
-              {nav.map(({ to, label }) => (
+              {nav.map(({ to, key }) => (
                 <li key={to}>
-                  <Link to={to} className="text-sm text-stone-300 hover:text-white transition-colors">{label}</Link>
+                  <Link to={to} className="text-sm text-stone-300 hover:text-white transition-colors">{t(key)}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
           <div className="lg:col-span-3">
-            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">Visit & contact</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">{t('footer.visit')}</p>
             <ul className="space-y-3 text-sm text-stone-300">
-              <li>Dodowa, Greater Accra, Ghana</li>
-              <li><a href="tel:+233289553203" className="hover:text-white transition-colors">+233 289 553 203</a></li>
-              <li><a href="tel:+233244099243" className="hover:text-white transition-colors">+233 244 099 243</a></li>
-              <li><a href="mailto:info@geolicraftsgh.com" className="hover:text-white transition-colors">info@geolicraftsgh.com</a></li>
+              <li>{SITE.address}</li>
+              {SITE.phones.map(p => (
+                <li key={p}><a href={`tel:${p.replace(/\s/g, '')}`} className="hover:text-white transition-colors">{p}</a></li>
+              ))}
+              <li><a href={`mailto:${SITE.email}`} className="hover:text-white transition-colors">{SITE.email}</a></li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-6">
           <p className="text-xs text-stone-500">
-            © {new Date().getFullYear()} Geolicrafts Company Limited · Est. 2004
+            © {new Date().getFullYear()} {t('footer.rights')}
           </p>
           <div className="flex items-center gap-2">
+            <a href={whatsappLink(t('common.whatsappGreeting'))} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className={social}>
+              <WhatsAppIcon size={16} />
+            </a>
             <a href="https://www.facebook.com/Geolicrafts" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={social}>
               <IconFacebook />
             </a>

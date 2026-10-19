@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import PageHeader from '../components/ui/PageHeader'
 import Pagination from '../components/ui/Pagination'
+import { useI18n } from '../i18n'
 
 const PAGE_SIZE = 9
 
@@ -68,27 +69,23 @@ const FALLBACK_POSTS = [
   },
 ].map(withImage)
 
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'short', year: 'numeric',
-  })
-}
-
 const onImgError = e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }
 
 function Meta({ post }) {
+  const { t, formatDate } = useI18n()
   return (
     <p className="flex items-center gap-2 text-xs text-stone-500">
       <span className="text-clay-600 font-medium">{post.category}</span>
       <span className="h-1 w-1 rounded-full bg-stone-300" />
-      {formatDate(post.published_at)}
+      {formatDate(post.published_at, { day: 'numeric', month: 'short', year: 'numeric' })}
       <span className="h-1 w-1 rounded-full bg-stone-300" />
-      {post.read_time} min read
+      {t('blog.minRead', { count: post.read_time })}
     </p>
   )
 }
 
 export default function Blog() {
+  const { t, lang } = useI18n()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
@@ -126,10 +123,12 @@ export default function Blog() {
   return (
     <>
       <PageHeader
-        eyebrow="Journal"
-        title={<>Stories from <em className="text-clay-600">the workshop.</em></>}
-        description="News, insights and stories from the heart of Ghana's craft industry."
-      />
+        eyebrow={t('blog.eyebrow')}
+        title={<>{t('blog.title')} <em className="text-clay-600">{t('blog.titleEm')}</em></>}
+        description={t('blog.intro')}
+      >
+        {lang !== 'en' && <p className="mt-4 text-sm text-stone-400">{t('blog.englishOnly')}</p>}
+      </PageHeader>
 
       {/* Category tabs */}
       <div className="container-page">
@@ -144,7 +143,7 @@ export default function Blog() {
                   : 'border-transparent text-stone-500 hover:text-stone-900'
               }`}
             >
-              {cat}
+              {cat === 'All' ? t('blog.all') : cat}
             </button>
           ))}
         </div>
@@ -163,8 +162,8 @@ export default function Blog() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
-              <p className="font-display text-4xl text-stone-900 mb-3">No stories yet.</p>
-              <p className="text-stone-500">Check back soon.</p>
+              <p className="font-display text-4xl text-stone-900 mb-3">{t('blog.emptyTitle')}</p>
+              <p className="text-stone-500">{t('blog.emptyText')}</p>
             </div>
           ) : (
             <>
@@ -180,12 +179,12 @@ export default function Blog() {
                     />
                   </div>
                   <div>
-                    <span className="chip mb-6">Featured</span>
+                    <span className="chip mb-6">{t('blog.featured')}</span>
                     <h2 className="text-4xl md:text-5xl leading-[1.05] text-stone-900 mb-5">{featured.title}</h2>
                     <p className="text-stone-500 leading-relaxed mb-6 line-clamp-3">{featured.excerpt}</p>
                     <Meta post={featured} />
                     <span className="link-arrow mt-8">
-                      Read story <ArrowRight size={15} />
+                      {t('blog.readStory')} <ArrowRight size={15} />
                     </span>
                   </div>
                 </Link>
@@ -194,7 +193,7 @@ export default function Blog() {
               {rest.length > 0 && (
                 <>
                   <h2 id="latest" className="scroll-mt-28 font-sans text-sm font-medium tracking-normal text-stone-900 pb-4 mb-10 border-b border-stone-200">
-                    Latest stories
+                    {t('blog.latest')}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
                     {paginated.map(post => (
@@ -223,6 +222,7 @@ export default function Blog() {
                     onChange={changePage}
                     totalItems={rest.length}
                     pageSize={PAGE_SIZE}
+                    labels={{ showing: t('common.showing'), of: t('common.of'), previous: t('common.previous'), next: t('common.next') }}
                     className="mt-16 pt-8 border-t border-stone-200"
                   />
                 </>

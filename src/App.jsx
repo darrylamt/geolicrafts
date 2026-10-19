@@ -4,10 +4,14 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Layout from './components/layout/Layout'
 import AdminLayout from './components/layout/AdminLayout'
 import ScrollToTop from './components/ui/ScrollToTop'
+import { useI18n } from './i18n'
 
 // Public pages
 import Home from './pages/Home'
 import Products from './pages/Products'
+import ProductPage from './pages/ProductPage'
+import Quote from './pages/Quote'
+import Catalogue from './pages/Catalogue'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import About from './pages/About'
@@ -46,6 +50,9 @@ function AppRoutes() {
       {/* Public */}
       <Route path="/" element={<Layout><Home /></Layout>} />
       <Route path="/products" element={<Layout><Products /></Layout>} />
+      <Route path="/products/:slug" element={<Layout><ProductPage /></Layout>} />
+      <Route path="/quote" element={<Layout><Quote /></Layout>} />
+      <Route path="/catalogue" element={<Catalogue />} />
       <Route path="/blog" element={<Layout><Blog /></Layout>} />
       <Route path="/blog/:slug" element={<Layout><BlogPost /></Layout>} />
       <Route path="/about" element={<Layout><About /></Layout>} />
@@ -66,14 +73,13 @@ function AppRoutes() {
 }
 
 function NotFound() {
+  const { t } = useI18n()
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-5 pt-24">
-      <p className="eyebrow mb-4">Error 404</p>
-      <h1 className="text-6xl md:text-8xl text-stone-900 mb-4">Lost the thread.</h1>
-      <p className="text-stone-500 text-lg mb-10 max-w-md">
-        The page you're looking for has moved or never existed.
-      </p>
-      <Link to="/" className="btn-primary">Back to home</Link>
+      <p className="eyebrow mb-4">{t('notFound.eyebrow')}</p>
+      <h1 className="text-6xl md:text-8xl text-stone-900 mb-4">{t('notFound.title')}</h1>
+      <p className="text-stone-500 text-lg mb-10 max-w-md">{t('notFound.text')}</p>
+      <Link to="/" className="btn-primary">{t('notFound.cta')}</Link>
     </div>
   )
 }

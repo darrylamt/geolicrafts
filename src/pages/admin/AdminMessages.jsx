@@ -54,10 +54,12 @@ export default function AdminMessages() {
   const filtered = messages.filter(m => {
     if (filter === 'unread') return !m.read
     if (filter === 'read') return m.read
+    if (filter === 'quote') return m.type === 'quote'
     return true
   })
 
   const unreadCount = messages.filter(m => !m.read).length
+  const quoteCount = messages.filter(m => m.type === 'quote').length
 
   return (
     <div>
@@ -71,6 +73,7 @@ export default function AdminMessages() {
               { key: 'all', label: 'All' },
               { key: 'unread', label: 'Unread', count: unreadCount },
               { key: 'read', label: 'Read' },
+              { key: 'quote', label: 'Quotes', count: quoteCount },
             ].map(({ key, label, count }) => (
               <button
                 key={key}
@@ -118,7 +121,10 @@ export default function AdminMessages() {
                         </span>
                         <span className="text-stone-400 text-xs shrink-0 tabular-nums">{shortDate(msg.created_at)}</span>
                       </div>
-                      <p className={`text-xs mt-1 truncate ${!msg.read ? 'text-stone-800' : 'text-stone-500'}`}>{msg.subject}</p>
+                      <p className={`text-xs mt-1 truncate flex items-center gap-1.5 ${!msg.read ? 'text-stone-800' : 'text-stone-500'}`}>
+                        {msg.type === 'quote' && <span className="shrink-0 rounded-full bg-clay-100 text-clay-700 px-1.5 text-[10px] font-semibold uppercase tracking-wide">Quote</span>}
+                        <span className="truncate">{msg.subject}</span>
+                      </p>
                       <p className="text-stone-400 text-xs mt-0.5 line-clamp-1">{msg.message}</p>
                     </button>
                   </li>
@@ -163,6 +169,39 @@ export default function AdminMessages() {
                   {new Date(selected.created_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
               </div>
+              {(selected.company || selected.country || selected.phone) && (
+                <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 pb-6 border-b border-stone-100 text-sm">
+                  {[['Company', selected.company], ['Country', selected.country], ['Phone', selected.phone]].filter(([, v]) => v).map(([k, v]) => (
+                    <div key={k}>
+                      <dt className="text-xs text-stone-500 mb-0.5">{k}</dt>
+                      <dd className="text-stone-900">{k === 'Phone' ? <a href={`tel:${v}`} className="hover:text-clay-700">{v}</a> : v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {Array.isArray(selected.items) && selected.items.length > 0 && (
+                <div className="mb-6 rounded-xl ring-1 ring-stone-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-stone-50 text-left text-xs text-stone-500">
+                        <th className="px-4 h-9 font-medium w-16">Qty</th>
+                        <th className="px-4 h-9 font-medium">Item</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {selected.items.map((item, i) => (
+                        <tr key={i}>
+                          <td className="px-4 py-2.5 tabular-nums font-medium text-stone-900">{item.qty}</td>
+                          <td className="px-4 py-2.5">
+                            <span className="text-stone-900">{item.name}</span>
+                            {item.notes && <span className="block text-xs text-stone-500 mt-0.5">{item.notes}</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               <p className="text-stone-700 leading-relaxed whitespace-pre-wrap">{selected.message}</p>
             </div>
 

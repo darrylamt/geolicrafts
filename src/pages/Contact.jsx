@@ -1,49 +1,48 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { MapPin, Mail, Phone, Check, ArrowRight } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 import PageHeader from '../components/ui/PageHeader'
+import Honeypot from '../components/ui/Honeypot'
+import { WhatsAppIcon } from '../components/ui/WhatsAppButton'
+import { useI18n } from '../i18n'
+import { submitEnquiry } from '../lib/enquiry'
+import { SITE, whatsappLink } from '../lib/site'
 
+// Stored in English so the admin inbox stays consistent; labels are translated
 const SUBJECTS = ['Product Enquiry', 'Export / Wholesale', 'Training Programme', 'Partnership', 'General Enquiry']
-
-const details = [
-  { icon: MapPin, label: 'Office & training centre', lines: ['Dodowa, Greater Accra Region, Ghana'] },
-  { icon: Phone, label: 'Phone', lines: ['+233 289 553 203', '+233 244 099 243'], href: v => `tel:${v.replace(/\s/g, '')}` },
-  { icon: Mail, label: 'Email', lines: ['info@geolicraftsgh.com'], href: v => `mailto:${v}` },
-]
+const EMPTY = { name: '', email: '', subject: '', message: '', website: '' }
 
 export default function Contact() {
+  const { t } = useI18n()
   const [params] = useSearchParams()
   const product = params.get('product')
-  const initial = {
-    name: '',
-    email: '',
+  const [form, setForm] = useState(() => ({
+    ...EMPTY,
     subject: product ? 'Product Enquiry' : '',
-    message: product ? `Hello, I'd like to know more about the "${product}".` : '',
-  }
-  const [form, setForm] = useState(initial)
+    message: product ? t('contact.productMessage', { product }) : '',
+  }))
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [startedAt, setStartedAt] = useState(() => Date.now())
+
+  const details = [
+    { icon: MapPin, label: t('contact.office'), lines: [SITE.address] },
+    { icon: Phone, label: t('contact.phone'), lines: SITE.phones, href: v => `tel:${v.replace(/\s/g, '')}` },
+    { icon: Mail, label: t('contact.email'), lines: [SITE.email], href: v => `mailto:${v}` },
+  ]
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async e => {
     e.preventDefault()
     setSubmitting(true)
-
-    const { error } = await supabase.from('contact_messages').insert([{
-      name: form.name,
-      email: form.email,
-      subject: form.subject,
-      message: form.message,
-    }])
-
+    const { error } = await submitEnquiry({ type: 'message', ...form, elapsed: Date.now() - startedAt })
     if (error) {
-      toast.error('Failed to send message. Please try again.')
+      toast.error(error.message || t('contact.error'))
     } else {
       setSubmitted(true)
-      toast.success('Message sent')
+      toast.success(t('contact.sentToast'))
     }
     setSubmitting(false)
   }
@@ -51,9 +50,9 @@ export default function Contact() {
   return (
     <>
       <PageHeader
-        eyebrow="Contact"
-        title={<>Let's <em className="text-clay-600">talk.</em></>}
-        description="Products, wholesale, partnerships or training programmes — we usually reply within two working days."
+        eyebrow={t('contact.eyebrow')}
+        title={<>{t('contact.title')} <em className="text-clay-600">{t('contact.titleEm')}</em></>}
+        description={t('contact.intro')}
       />
 
       <section className="pb-20 md:pb-28">
@@ -80,54 +79,60 @@ export default function Contact() {
               ))}
             </ul>
 
+            <a
+              href={whatsappLink(t('common.whatsappGreeting'))}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary w-full"
+            >
+              <span className="text-[#25D366]"><WhatsAppIcon size={18} /></span> {t('contact.whatsappCta')}
+            </a>
+
             <div className="border-t border-stone-200 pt-8 space-y-6">
               <div>
-                <p className="font-medium text-stone-900 mb-1.5">Export enquiries</p>
-                <p className="text-sm text-stone-500 leading-relaxed">
-                  We export to Europe, the USA and worldwide — bulk orders, wholesale partnerships and international trade.
-                </p>
+                <p className="font-medium text-stone-900 mb-1.5">{t('contact.exportTitle')}</p>
+                <p className="text-sm text-stone-500 leading-relaxed">{t('contact.exportText')}</p>
               </div>
               <div>
-                <p className="font-medium text-stone-900 mb-1.5">Training programmes</p>
-                <p className="text-sm text-stone-500 leading-relaxed">
-                  Vocational training for youth and women in the Dodowa area. Ask us about the next intake.
-                </p>
+                <p className="font-medium text-stone-900 mb-1.5">{t('contact.trainingTitle')}</p>
+                <p className="text-sm text-stone-500 leading-relaxed">{t('contact.trainingText')}</p>
               </div>
             </div>
           </aside>
 
           {/* Form */}
           <div className="lg:col-span-8">
-            <div className="card p-6 sm:p-10">
+            <div className="card p-6 sm:p-10 relative">
               {submitted ? (
                 <div className="text-center py-16">
                   <span className="mx-auto grid place-items-center h-14 w-14 rounded-full bg-clay-50 text-clay-600 mb-6">
                     <Check size={24} />
                   </span>
-                  <h2 className="text-4xl text-stone-900 mb-3">Message sent.</h2>
-                  <p className="text-stone-500">Thank you for reaching out — we'll be in touch soon.</p>
+                  <h2 className="text-4xl text-stone-900 mb-3">{t('contact.sentTitle')}</h2>
+                  <p className="text-stone-500">{t('contact.sentText')}</p>
                   <button
-                    onClick={() => { setSubmitted(false); setForm({ name: '', email: '', subject: '', message: '' }) }}
+                    onClick={() => { setSubmitted(false); setForm(EMPTY); setStartedAt(Date.now()) }}
                     className="btn-secondary mt-8"
                   >
-                    Send another message
+                    {t('contact.another')}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  <Honeypot value={form.website} onChange={handleChange} />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="name" className="label">Full name</label>
-                      <input id="name" type="text" name="name" value={form.name} onChange={handleChange} required placeholder="Ama Mensah" className="input" />
+                      <label htmlFor="name" className="label">{t('contact.name')}</label>
+                      <input id="name" type="text" name="name" value={form.name} onChange={handleChange} required maxLength={120} autoComplete="name" className="input" />
                     </div>
                     <div>
-                      <label htmlFor="email" className="label">Email</label>
-                      <input id="email" type="email" name="email" value={form.email} onChange={handleChange} required placeholder="you@company.com" className="input" />
+                      <label htmlFor="email" className="label">{t('contact.emailLabel')}</label>
+                      <input id="email" type="email" name="email" value={form.email} onChange={handleChange} required maxLength={200} autoComplete="email" placeholder="you@company.com" className="input" />
                     </div>
                   </div>
 
                   <fieldset>
-                    <legend className="label">What's this about?</legend>
+                    <legend className="label">{t('contact.about')}</legend>
                     <div className="flex flex-wrap gap-2">
                       {SUBJECTS.map(s => (
                         <label
@@ -147,30 +152,31 @@ export default function Contact() {
                             required
                             className="sr-only"
                           />
-                          {s}
+                          {t(`contact.subjects.${s}`)}
                         </label>
                       ))}
                     </div>
                   </fieldset>
 
                   <div>
-                    <label htmlFor="message" className="label">Message</label>
+                    <label htmlFor="message" className="label">{t('contact.message')}</label>
                     <textarea
                       id="message"
                       name="message"
                       value={form.message}
                       onChange={handleChange}
                       required
+                      maxLength={5000}
                       rows={6}
-                      placeholder="Tell us how we can help…"
+                      placeholder={t('contact.messagePlaceholder')}
                       className="input resize-none"
                     />
                   </div>
 
                   <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                    <p className="text-xs text-stone-400">We'll only use your details to reply to you.</p>
+                    <p className="text-xs text-stone-400">{t('contact.privacy')}</p>
                     <button type="submit" disabled={submitting} className="btn-primary btn-lg">
-                      {submitting ? 'Sending…' : <>Send message <ArrowRight size={16} /></>}
+                      {submitting ? t('contact.sending') : <>{t('contact.send')} <ArrowRight size={16} /></>}
                     </button>
                   </div>
                 </form>

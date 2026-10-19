@@ -7,7 +7,9 @@ function getPages(page, total) {
   return [1, 'gap-l', page - 1, page, page + 1, 'gap-r', total]
 }
 
-export default function Pagination({ page, totalPages, onChange, totalItems, pageSize, className = '' }) {
+const EN = { showing: 'Showing', of: 'of', previous: 'Previous page', next: 'Next page' }
+
+export default function Pagination({ page, totalPages, onChange, totalItems, pageSize, className = '', labels = EN }) {
   if (totalPages <= 1) return null
 
   const from = (page - 1) * pageSize + 1
@@ -17,8 +19,8 @@ export default function Pagination({ page, totalPages, onChange, totalItems, pag
     <nav aria-label="Pagination" className={`flex items-center justify-between gap-4 ${className}`}>
       {totalItems != null ? (
         <p className="text-sm text-stone-500 tabular-nums">
-          <span className="hidden sm:inline">Showing </span>
-          <span className="font-medium text-stone-900">{from}–{to}</span> of {totalItems}
+          <span className="hidden sm:inline">{labels.showing} </span>
+          <span className="font-medium text-stone-900">{from}–{to}</span> {labels.of} {totalItems}
         </p>
       ) : <span />}
 
@@ -27,7 +29,7 @@ export default function Pagination({ page, totalPages, onChange, totalItems, pag
           onClick={() => onChange(page - 1)}
           disabled={page === 1}
           className="icon-btn ring-1 ring-inset ring-stone-200 bg-white"
-          aria-label="Previous page"
+          aria-label={labels.previous}
         >
           <ChevronLeft size={16} />
         </button>
@@ -61,7 +63,7 @@ export default function Pagination({ page, totalPages, onChange, totalItems, pag
           onClick={() => onChange(page + 1)}
           disabled={page === totalPages}
           className="icon-btn ring-1 ring-inset ring-stone-200 bg-white"
-          aria-label="Next page"
+          aria-label={labels.next}
         >
           <ChevronRight size={16} />
         </button>

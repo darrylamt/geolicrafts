@@ -1,18 +1,43 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Menu, X, ArrowUpRight } from 'lucide-react'
+import { Menu, X, ArrowUpRight, ClipboardList } from 'lucide-react'
 import Logo from '../ui/Logo'
+import LanguageSwitcher from '../ui/LanguageSwitcher'
+import { useI18n } from '../../i18n'
+import { useQuote } from '../../context/QuoteContext'
+import { SITE } from '../../lib/site'
 
 const links = [
-  { to: '/products', label: 'Collections' },
-  { to: '/about', label: 'About' },
-  { to: '/blog', label: 'Journal' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/products', key: 'nav.collections' },
+  { to: '/about', key: 'nav.about' },
+  { to: '/blog', key: 'nav.journal' },
+  { to: '/contact', key: 'nav.contact' },
 ]
+
+function QuoteButton() {
+  const { count, setDrawerOpen } = useQuote()
+  const { t } = useI18n()
+  return (
+    <button
+      onClick={() => setDrawerOpen(true)}
+      className="relative icon-btn"
+      aria-label={`${t('nav.quoteList')} (${count})`}
+      title={t('nav.quoteList')}
+    >
+      <ClipboardList size={19} />
+      {count > 0 && (
+        <span className="absolute -top-0.5 -right-0.5 grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-clay-600 text-white text-[10px] font-semibold tabular-nums animate-fade-in">
+          {count}
+        </span>
+      )}
+    </button>
+  )
+}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { pathname } = useLocation()
+  const { t } = useI18n()
   // Menu is tied to the path it was opened on, so navigating closes it
   const [openPath, setOpenPath] = useState(null)
   const open = openPath === pathname
@@ -24,7 +49,6 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -42,8 +66,8 @@ export default function Navbar() {
       <div className="container-page flex items-center justify-between h-16 md:h-[72px]">
         <Logo />
 
-        <nav className="hidden md:flex items-center gap-1" aria-label="Main">
-          {links.map(({ to, label }) => (
+        <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
+          {links.map(({ to, key }) => (
             <NavLink
               key={to}
               to={to}
@@ -53,19 +77,21 @@ export default function Navbar() {
                 }`
               }
             >
-              {label}
+              {t(key)}
             </NavLink>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link to="/contact" className="btn-primary btn-sm hidden md:inline-flex">
-            Enquire <ArrowUpRight size={14} />
+        <div className="flex items-center gap-1.5">
+          <LanguageSwitcher className="hidden lg:inline-flex mr-1" />
+          <QuoteButton />
+          <Link to="/contact" className="btn-primary btn-sm hidden lg:inline-flex ml-1">
+            {t('nav.enquire')} <ArrowUpRight size={14} />
           </Link>
           <button
-            className="icon-btn md:hidden -mr-2"
+            className="icon-btn lg:hidden -mr-2"
             onClick={() => setOpen(!open)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t('nav.closeMenu') : t('nav.openMenu')}
             aria-expanded={open}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -75,9 +101,9 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden h-[calc(100dvh-4rem)] bg-stone-50 animate-fade-in">
-          <nav className="container-page flex flex-col pt-6" aria-label="Mobile">
-            {links.map(({ to, label }, i) => (
+        <div className="lg:hidden h-[calc(100dvh-4rem)] overflow-y-auto bg-stone-50 animate-fade-in">
+          <nav className="container-page flex flex-col pt-6 pb-10" aria-label="Mobile">
+            {links.map(({ to, key }, i) => (
               <NavLink
                 key={to}
                 to={to}
@@ -88,16 +114,17 @@ export default function Navbar() {
                   }`
                 }
               >
-                {label}
+                {t(key)}
                 <ArrowUpRight size={20} className="text-stone-300" />
               </NavLink>
             ))}
             <Link to="/contact" className="btn-primary btn-lg mt-8">
-              Make an enquiry
+              {t('nav.makeEnquiry')}
             </Link>
-            <p className="mt-8 text-sm text-stone-500">
-              Dodowa, Greater Accra · info@geolicraftsgh.com
-            </p>
+            <div className="mt-8 flex items-center justify-between gap-4">
+              <p className="text-sm text-stone-500">{SITE.email}</p>
+              <LanguageSwitcher />
+            </div>
           </nav>
         </div>
       )}

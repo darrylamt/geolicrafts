@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useI18n } from '../i18n'
 
 const FALLBACK_POSTS = [
   {
@@ -243,12 +244,6 @@ Interested in wholesale drum orders? Contact us at info@geolicraftsgh.com — we
   },
 ]
 
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
-
 function parseBold(text) {
   const parts = text.split(/\*\*(.*?)\*\*/g)
   return parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="font-semibold text-stone-900">{part}</strong> : part)
@@ -324,6 +319,7 @@ function renderContent(text) {
 }
 
 export default function BlogPost() {
+  const { t, formatDate } = useI18n()
   const { slug } = useParams()
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -367,10 +363,10 @@ export default function BlogPost() {
   if (notFound) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-5 pt-24">
-        <p className="eyebrow mb-4">Journal</p>
-        <h1 className="text-5xl md:text-7xl text-stone-900 mb-8">Story not found.</h1>
+        <p className="eyebrow mb-4">{t('blog.eyebrow')}</p>
+        <h1 className="text-5xl md:text-7xl text-stone-900 mb-8">{t('blog.notFound')}</h1>
         <Link to="/blog" className="btn-primary">
-          <ArrowLeft size={16} /> Back to journal
+          <ArrowLeft size={16} /> {t('blog.backToJournal')}
         </Link>
       </div>
     )
@@ -378,16 +374,17 @@ export default function BlogPost() {
 
   return (
     <article className="pt-28 md:pt-36 pb-20 md:pb-28">
+      <title>{`${post.title} — Geolicrafts`}</title>
       <header className="container-page max-w-3xl text-center animate-fade-up">
         <Link to="/blog" className="btn-ghost btn-sm mb-10">
-          <ArrowLeft size={14} /> Journal
+          <ArrowLeft size={14} /> {t('blog.back')}
         </Link>
         <p className="flex items-center justify-center gap-2 text-sm text-stone-500 mb-6">
           <span className="text-clay-600 font-medium">{post.category}</span>
           <span className="h-1 w-1 rounded-full bg-stone-300" />
           {formatDate(post.published_at)}
           <span className="h-1 w-1 rounded-full bg-stone-300" />
-          {post.read_time} min read
+          {t('blog.minRead', { count: post.read_time })}
         </p>
         <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.02] text-stone-900">{post.title}</h1>
       </header>
@@ -410,13 +407,13 @@ export default function BlogPost() {
 
         <div className="mt-16 pt-10 border-t border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
-            <p className="font-medium text-stone-900">Interested in our work?</p>
-            <p className="text-sm text-stone-500">We supply individuals, retailers and wholesale importers.</p>
+            <p className="font-medium text-stone-900">{t('blog.interested')}</p>
+            <p className="text-sm text-stone-500">{t('blog.interestedText')}</p>
           </div>
           <div className="flex gap-2">
-            <Link to="/blog" className="btn-secondary">More stories</Link>
+            <Link to="/blog" className="btn-secondary">{t('blog.more')}</Link>
             <Link to="/contact" className="btn-primary">
-              Get in touch <ArrowRight size={15} />
+              {t('blog.contact')} <ArrowRight size={15} />
             </Link>
           </div>
         </div>

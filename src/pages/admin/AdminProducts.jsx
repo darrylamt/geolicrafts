@@ -1,13 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Pencil, Trash2, Upload, Search, Download, ImageIcon, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, Upload, Search, Download, ImageIcon, X, ExternalLink } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
 import AdminHeader from '../../components/ui/AdminHeader'
 import Pagination from '../../components/ui/Pagination'
 import Modal from '../../components/ui/Modal'
+import { invalidateProducts } from '../../lib/products'
+import { productPath } from '../../lib/site'
 
 const CATEGORIES = ['Musical Instruments', 'Baskets & Weaving', 'Wood Carvings', 'Textiles & Fashion', 'Gifts & Souvenirs']
-const EMPTY_FORM = { name: '', category: '', description: '', image_url: '' }
+// Detail fields need supabase/migrations/002_product_details_and_enquiries.sql
+const DETAIL_FIELDS = [
+  { key: 'dimensions', label: 'Dimensions', placeholder: 'H 60 cm · Ø 30 cm' },
+  { key: 'materials', label: 'Materials', placeholder: 'Tweneboa wood, goat skin' },
+  { key: 'colors', label: 'Colours', placeholder: 'Natural, black, red' },
+  { key: 'min_order', label: 'Minimum order', placeholder: '10 pieces' },
+  { key: 'lead_time', label: 'Lead time', placeholder: '3–4 weeks' },
+]
+const EMPTY_FORM = {
+  name: '', category: '', description: '', image_url: '', images: [],
+  ...Object.fromEntries(DETAIL_FIELDS.map(f => [f.key, ''])),
+}
 const PAGE_SIZES = [10, 25, 50]
 
 export default function AdminProducts() {
@@ -24,6 +37,7 @@ export default function AdminProducts() {
   const [pageSize, setPageSize] = useState(10)
   const [deleting, setDeleting] = useState(null)
   const fileRef = useRef()
+  const galleryRef = useRef()
 
   const load = async () => {
     const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
@@ -35,33 +49,54 @@ export default function AdminProducts() {
 
   const openAdd = () => { setForm(EMPTY_FORM); setEditId(null); setShowModal(true) }
   const openEdit = p => {
-    setForm({ name: p.name, category: p.category, description: p.description || '', image_url: p.image_url || '' })
+    setForm({
+      name: p.name, category: p.category, description: p.description || '', image_url: p.image_url || '',
+      images: Array.isArray(p.images) ? p.images : [],
+      ...Object.fromEntries(DETAIL_FIELDS.map(f => [f.key, p[f.key] || ''])),
+    })
     setEditId(p.id)
     setShowModal(true)
   }
   const closeModal = () => { setShowModal(false); setForm(EMPTY_FORM); setEditId(null) }
 
+  const uploadFile = async file => {
+    const ext = file.name.split('.').pop()
+    const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`
+    const { error } = await supabase.storage.from('images').upload(path, file)
+    if (error) return null
+    return supabase.storage.from('images').getPublicUrl(path).data.publicUrl
+  }
+
   const handleUpload = async e => {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const ext = file.name.split('.').pop()
-    const path = `products/${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('images').upload(path, file)
-    if (error) {
-      toast.error('Upload failed')
-    } else {
-      const { data } = supabase.storage.from('images').getPublicUrl(path)
-      setForm(f => ({ ...f, image_url: data.publicUrl }))
-      toast.success('Image uploaded')
-    }
+    const url = await uploadFile(file)
+    if (url) { setForm(f => ({ ...f, image_url: url })); toast.success('Image uploaded') }
+    else toast.error('Upload failed')
     setUploading(false)
+    e.target.value = ''
+  }
+
+  const handleGalleryUpload = async e => {
+    const files = [...(e.target.files || [])]
+    if (!files.length) return
+    setUploading(true)
+    const urls = (await Promise.all(files.map(uploadFile))).filter(Boolean)
+    if (urls.length) setForm(f => ({ ...f, images: [...f.images, ...urls] }))
+    if (urls.length < files.length) toast.error('Some uploads failed')
+    setUploading(false)
+    e.target.value = ''
   }
 
   const handleSave = async e => {
     e.preventDefault()
     setSaving(true)
     const payload = { name: form.name, category: form.category, description: form.description, image_url: form.image_url }
+    // Only send detail fields when used, so saving still works before migration 002 is applied
+    const details = { images: form.images, ...Object.fromEntries(DETAIL_FIELDS.map(f => [f.key, form[f.key].trim() || null])) }
+    const usesDetails = form.images.length > 0 || DETAIL_FIELDS.some(f => form[f.key].trim()) || products.some(p => 'images' in p)
+    if (usesDetails) Object.assign(payload, details)
     let error
     if (editId) {
       ({ error } = await supabase.from('products').update(payload).eq('id', editId))
@@ -69,8 +104,10 @@ export default function AdminProducts() {
       ({ error } = await supabase.from('products').insert([payload]))
     }
     if (error) {
-      toast.error('Failed to save product')
+      const missingColumn = error.code === 'PGRST204' || error.code === '42703'
+      toast.error(missingColumn ? 'Run migration 002 in Supabase to enable product details' : 'Failed to save product')
     } else {
+      invalidateProducts()
       toast.success(editId ? 'Product updated' : 'Product added')
       closeModal()
       load()
@@ -81,7 +118,7 @@ export default function AdminProducts() {
   const confirmDelete = async () => {
     const { error } = await supabase.from('products').delete().eq('id', deleting.id)
     if (error) toast.error('Delete failed')
-    else { toast.success('Product deleted'); load() }
+    else { invalidateProducts(); toast.success('Product deleted'); load() }
     setDeleting(null)
   }
 
@@ -204,6 +241,9 @@ export default function AdminProducts() {
                       </td>
                       <td className="pl-4 pr-5 py-3">
                         <div className="flex items-center gap-0.5 justify-end">
+                          <a href={productPath(p)} target="_blank" rel="noopener noreferrer" className="icon-btn" aria-label={`View ${p.name}`}>
+                            <ExternalLink size={15} />
+                          </a>
                           <button onClick={() => openEdit(p)} className="icon-btn" aria-label={`Edit ${p.name}`}>
                             <Pencil size={15} />
                           </button>
@@ -235,6 +275,7 @@ export default function AdminProducts() {
         open={showModal}
         onClose={closeModal}
         title={editId ? 'Edit product' : 'Add product'}
+        size="lg"
         footer={
           <>
             <button type="button" onClick={closeModal} className="btn-ghost">Cancel</button>
@@ -317,6 +358,54 @@ export default function AdminProducts() {
                   <Upload size={14} /> {uploading ? 'Uploading…' : 'Upload from device'}
                 </button>
               </div>
+            </div>
+          </div>
+
+          <div>
+            <span className="label">More photos <span className="text-stone-400 font-normal">(gallery on the product page)</span></span>
+            <div className="grid grid-cols-5 gap-2">
+              {form.images.map((src, i) => (
+                <div key={src + i} className="relative aspect-square rounded-xl overflow-hidden bg-stone-100">
+                  <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, images: f.images.filter((_, j) => j !== i) }))}
+                    className="absolute top-1 right-1 grid place-items-center h-6 w-6 rounded-full bg-white/90 text-stone-700 hover:bg-white"
+                    aria-label="Remove photo"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+              <input type="file" accept="image/*" multiple ref={galleryRef} onChange={handleGalleryUpload} className="hidden" />
+              <button
+                type="button"
+                onClick={() => galleryRef.current?.click()}
+                disabled={uploading}
+                className="aspect-square rounded-xl border border-dashed border-stone-300 text-stone-400 hover:text-stone-900 hover:border-stone-400 grid place-items-center transition-colors"
+                aria-label="Add photos"
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-5 border-t border-stone-100">
+            <p className="text-sm font-medium text-stone-900 mb-4">Details <span className="text-stone-400 font-normal">— shown on the product page and catalogue</span></p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {DETAIL_FIELDS.map(({ key, label, placeholder }) => (
+                <div key={key}>
+                  <label className="label" htmlFor={`p-${key}`}>{label}</label>
+                  <input
+                    id={`p-${key}`}
+                    type="text"
+                    value={form[key]}
+                    onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    className="input"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </form>
