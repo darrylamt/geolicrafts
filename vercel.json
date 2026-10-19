@@ -1,28 +1,163 @@
 {
   "redirects": [
-    { "source": "/index.php/product/:slug/", "destination": "/products?q=:slug", "permanent": true },
-    { "source": "/index.php/product/:slug", "destination": "/products?q=:slug", "permanent": true },
-    { "source": "/index.php/product-category/drums/:path*", "destination": "/products?category=Musical%20Instruments", "permanent": true },
-    { "source": "/index.php/product-category/percussion-instrument/:path*", "destination": "/products?category=Musical%20Instruments", "permanent": true },
-    { "source": "/index.php/product-category/xylophone/:path*", "destination": "/products?category=Musical%20Instruments", "permanent": true },
-    { "source": "/index.php/product-category/baskets/:path*", "destination": "/products?category=Baskets%20%26%20Weaving", "permanent": true },
-    { "source": "/index.php/product-category/straw-hat/:path*", "destination": "/products?category=Baskets%20%26%20Weaving", "permanent": true },
-    { "source": "/index.php/product-category/fruit-bowl/:path*", "destination": "/products?category=Baskets%20%26%20Weaving", "permanent": true },
-    { "source": "/index.php/product-category/african-mask/:path*", "destination": "/products?category=Wood%20Carvings", "permanent": true },
-    { "source": "/index.php/product-category/fabric-fans/:path*", "destination": "/products?category=Textiles%20%26%20Fashion", "permanent": true },
-    { "source": "/index.php/product-category/:path*", "destination": "/products", "permanent": true },
-    { "source": "/index.php/(shop|our-products|cart|checkout|my-account)/?", "destination": "/products", "permanent": true },
-    { "source": "/index.php/(about-us|about-geolicrafts|our-production-process|eco-friendly-crafts)/?", "destination": "/about", "permanent": true },
-    { "source": "/index.php/(contact-us|contact-us-2)/?", "destination": "/contact", "permanent": true },
-    { "source": "/index.php/:year(\\d{4})/:path*", "destination": "/blog", "permanent": true },
-    { "source": "/index.php/:path*", "destination": "/", "permanent": true },
-    { "source": "/index.php", "destination": "/", "permanent": true },
-    { "source": "/(shop|product|product-category|cart|checkout)/:path*", "destination": "/products", "permanent": true },
-    { "source": "/(wp-admin|wp-login.php)/:path*", "destination": "/admin", "permanent": false }
+    {
+      "source": "/index.php/product/:slug",
+      "destination": "/products?q=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product/:slug/",
+      "destination": "/products?q=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/drums",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/drums/:rest*",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/percussion-instrument",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/percussion-instrument/:rest*",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/xylophone",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/xylophone/:rest*",
+      "destination": "/products?category=Musical%20Instruments",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/baskets",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/baskets/:rest*",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/straw-hat",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/straw-hat/:rest*",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/fruit-bowl",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/fruit-bowl/:rest*",
+      "destination": "/products?category=Baskets%20%26%20Weaving",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/african-mask",
+      "destination": "/products?category=Wood%20Carvings",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/african-mask/:rest*",
+      "destination": "/products?category=Wood%20Carvings",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/fabric-fans",
+      "destination": "/products?category=Textiles%20%26%20Fashion",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/fabric-fans/:rest*",
+      "destination": "/products?category=Textiles%20%26%20Fashion",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/product-category/:rest*",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(shop|our-products|cart|checkout|my-account)",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(shop|our-products|cart|checkout|my-account)/",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(about-us|about-geolicrafts|our-production-process|eco-friendly-crafts)",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(about-us|about-geolicrafts|our-production-process|eco-friendly-crafts)/",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(contact-us|contact-us-2)",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:page(contact-us|contact-us-2)/",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:year(2018|2019|2020|2021|2022|2023|2024|2025|2026)/:rest*",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/:rest*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/wp-admin/:rest*",
+      "destination": "/admin",
+      "permanent": false
+    },
+    {
+      "source": "/wp-login.php",
+      "destination": "/admin",
+      "permanent": false
+    }
   ],
   "rewrites": [
-    { "source": "/products/:slug", "destination": "/api/page?kind=product&slug=:slug" },
-    { "source": "/blog/:slug", "destination": "/api/page?kind=post&slug=:slug" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/products/:slug",
+      "destination": "/api/page?kind=product&slug=:slug"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/page?kind=post&slug=:slug"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
