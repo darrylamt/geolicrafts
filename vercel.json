@@ -159,5 +159,12 @@
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/og.js": {
+      "includeFiles": "api/_fonts/**",
+      "memory": 1024,
+      "maxDuration": 15
+    }
+  }
 }

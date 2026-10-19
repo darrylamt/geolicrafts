@@ -76,7 +76,7 @@ function ProductDetail({ product, products }) {
 
   return (
     <>
-      <Seo title={product.name} description={product.description} image={imageFor(product)} type="product" />
+      <Seo title={product.name} description={product.description} image={`/api/og?type=product&slug=${encodeURIComponent(productPath(product).split('/').pop())}`} type="product" />
 
       <section className="pt-24 md:pt-32 pb-20 md:pb-28">
         <div className="container-page">

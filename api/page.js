@@ -36,16 +36,17 @@ export async function lookup(kind, slug, { url, key, fetchImpl = fetch }) {
     : await get(`products?select=name,description,image_url,category&slug=eq.${encodeURIComponent(slug)}&limit=1`)
   return product && {
     title: product.name,
+    category: product.category,
     description: product.description || `Handcrafted ${product.category || 'piece'} from Geolicrafts, Dodowa, Ghana.`,
     image: product.image_url,
     type: 'product',
   }
 }
 
-export function injectMeta(html, meta, pageUrl, origin) {
+export function injectMeta(html, meta, pageUrl, origin, ogImage) {
   const title = `${meta.title} — ${SITE_NAME}`
   const description = clean(meta.description).slice(0, 300)
-  const image = meta.image ? new URL(meta.image, origin).href : `${origin}/images/og.jpg`
+  const image = ogImage || (meta.image ? new URL(meta.image, origin).href : `${origin}/images/og.jpg`)
 
   const tags = [
     `<meta name="description" content="${escape(description)}" />`,
@@ -55,6 +56,10 @@ export function injectMeta(html, meta, pageUrl, origin) {
     `<meta property="og:title" content="${escape(title)}" />`,
     `<meta property="og:description" content="${escape(description)}" />`,
     `<meta property="og:image" content="${escape(image)}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:alt" content="${escape(title)}" />`,
+    `<meta name="twitter:image" content="${escape(image)}" />`,
     `<meta property="og:url" content="${escape(pageUrl)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
   ].join('\n    ')
@@ -87,7 +92,9 @@ export default async function handler(req, res) {
       url: process.env.VITE_SUPABASE_URL,
       key: process.env.VITE_SUPABASE_ANON_KEY,
     })
-    if (meta) html = injectMeta(html, meta, origin + path, origin)
+    // Branded share card rendered by api/og.js
+    const ogImage = `${origin}/api/og?type=${kind === 'post' ? 'post' : 'product'}&slug=${encodeURIComponent(String(slug || ''))}`
+    if (meta) html = injectMeta(html, meta, origin + path, origin, ogImage)
   } catch (err) {
     console.error('meta lookup failed', err)
   }

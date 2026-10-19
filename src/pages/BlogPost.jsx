@@ -376,7 +376,7 @@ export default function BlogPost() {
 
   return (
     <article className="pt-28 md:pt-36 pb-20 md:pb-28">
-      <Seo title={post.title} description={post.excerpt} image={coverFor(post)} type="article" />
+      <Seo title={post.title} description={post.excerpt} image={`/api/og?type=post&slug=${encodeURIComponent(post.slug)}`} type="article" />
       <header className="container-page max-w-3xl text-center animate-fade-up">
         <Link to="/blog" className="btn-ghost btn-sm mb-10">
           <ArrowLeft size={14} /> {t('blog.back')}
