@@ -77,6 +77,15 @@ export default {
         { title: 'Kunsthandwerk & Mode', items: 'Masken · Stofffächer · Strohhüte · Glocken' },
       ],
     },
+    featured: {
+      eyebrow: 'Empfohlen',
+      title: 'Stücke, die wir gerade lieben.',
+    },
+    trust: {
+      eyebrow: 'Weltweit geschätzt',
+      title: 'Was unsere Kunden sagen.',
+      partners: 'Einige der Händler und Partner, mit denen wir arbeiten',
+    },
     story: {
       eyebrow: 'Unsere Geschichte',
       title: 'Von einer Werkstatt mit fünf zu einem Team von fünfundsechzig.',
@@ -154,6 +163,11 @@ export default {
     addToQuote: 'Zur Angebotsliste',
     added: 'Zur Angebotsliste hinzugefügt',
     inQuote: 'In der Angebotsliste',
+    sort: 'Sortieren nach',
+    sort_featured: 'Empfohlen',
+    sort_newest: 'Neueste',
+    sort_name: 'Name A–Z',
+    featured: 'Empfohlen',
   },
 
   product: {

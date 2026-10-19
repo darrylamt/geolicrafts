@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Eye, EyeOff, Search, BookOpen } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, Pencil, Trash2, Eye, EyeOff, Search, BookOpen, Upload, X } from 'lucide-react'
+import { uploadImage } from '../../lib/upload'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
 import AdminHeader from '../../components/ui/AdminHeader'
@@ -48,6 +49,8 @@ export default function AdminBlog() {
   const [status, setStatus] = useState('all')
   const [page, setPage] = useState(1)
   const [deleting, setDeleting] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const coverRef = useRef()
 
   const load = async () => {
     const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false })
@@ -100,6 +103,18 @@ export default function AdminBlog() {
     if (error) toast.error('Failed to save post')
     else { toast.success(editId ? 'Post updated' : 'Post created'); closeModal(); load() }
     setSaving(false)
+  }
+
+  const handleCover = async e => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const url = await uploadImage(file, 'blog')
+    setUploading(false)
+    e.target.value = ''
+    if (!url) return toast.error('Upload failed')
+    setForm(f => ({ ...f, image_url: url }))
+    toast.success('Cover uploaded')
   }
 
   const confirmDelete = async () => {
@@ -310,16 +325,39 @@ export default function AdminBlog() {
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
-            <div>
-              <label className="label" htmlFor="b-img">Cover image URL</label>
-              <input
-                id="b-img"
-                type="url"
-                value={form.image_url}
-                onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                placeholder="https://…"
-                className="input"
-              />
+            <div className="sm:col-span-2">
+              <label className="label" htmlFor="b-img">Cover image</label>
+              <div className="flex gap-4">
+                <div className="relative h-24 w-36 shrink-0 rounded-xl bg-stone-100 overflow-hidden grid place-items-center text-stone-400">
+                  {form.image_url ? (
+                    <>
+                      <img src={form.image_url} alt="Cover preview" className="absolute inset-0 w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, image_url: '' }))}
+                        className="absolute top-1 right-1 grid place-items-center h-6 w-6 rounded-full bg-white/90 text-stone-700 hover:bg-white"
+                        aria-label="Remove cover"
+                      >
+                        <X size={12} />
+                      </button>
+                    </>
+                  ) : <span className="text-[11px] text-center px-2">Default photo</span>}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    id="b-img"
+                    type="url"
+                    value={form.image_url}
+                    onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
+                    placeholder="Paste image URL"
+                    className="input"
+                  />
+                  <input type="file" accept="image/*" ref={coverRef} onChange={handleCover} className="hidden" />
+                  <button type="button" onClick={() => coverRef.current?.click()} disabled={uploading} className="btn-secondary btn-sm w-full">
+                    <Upload size={14} /> {uploading ? 'Uploading…' : 'Upload from device'}
+                  </button>
+                </div>
+              </div>
             </div>
             <div>
               <label className="label" htmlFor="b-rt">Read time (min)</label>

@@ -2,16 +2,18 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Users, Globe, Leaf } from 'lucide-react'
 import PageHeader from '../components/ui/PageHeader'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
 
 // Paired by index with about.values.items / about.facility.items in the dictionaries
 const valueIcons = [Award, Users, Globe, Leaf]
-const facilityImages = ['/pics/adminblock.jpeg', '/pics/trainingbuilding1.jpeg', '/pics/warehouse1.jpeg']
+const facilityImages = ['/pics/adminblock.webp', '/pics/trainingbuilding1.webp', '/pics/warehouse1.webp']
 
 export default function About() {
   const { t } = useI18n()
 
   return (
     <>
+      <Seo title={t('nav.about')} description={t('about.beginning.p1')} />
       <PageHeader
         eyebrow={t('about.eyebrow')}
         title={<>{t('about.title')} <em className="text-clay-600">{t('about.titleEm')}</em></>}
@@ -23,7 +25,7 @@ export default function About() {
         <div className="container-page">
           <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] bg-stone-200">
             <img
-              src="/pics/workers.jpeg"
+              src="/pics/workers.webp"
               alt="Artisans carving drums in the Dodowa workshop"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -98,7 +100,7 @@ export default function About() {
         <div className="container-page grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative aspect-[4/5] sm:aspect-[4/3] lg:aspect-[4/5] rounded-2xl overflow-hidden bg-stone-800">
             <img
-              src="/pics/trainingschoolbuilding.jpeg"
+              src="/pics/trainingschoolbuilding.webp"
               alt="Dodowa Training Centre building"
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover object-bottom"
@@ -148,7 +150,7 @@ export default function About() {
         <div className="container-page">
           <div className="card p-6 sm:p-10 md:p-12 grid md:grid-cols-12 gap-8 md:gap-12 items-center">
             <img
-              src="/pics/founder.jpeg"
+              src="/pics/founder.webp"
               alt="George Akologo"
               loading="lazy"
               className="md:col-span-4 w-full aspect-square rounded-2xl object-cover object-top"

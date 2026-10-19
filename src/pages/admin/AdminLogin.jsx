@@ -91,7 +91,7 @@ export default function AdminLogin() {
 
       <div className="hidden lg:block p-4">
         <div className="relative h-full rounded-[2rem] overflow-hidden bg-stone-200">
-          <img src="/pics/process.jpeg" alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src="/pics/process.webp" alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent" />
           <p className="absolute bottom-10 left-10 right-10 font-display text-4xl text-white leading-tight">
             “The wood speaks — our duty is simply to translate its language for the world.”

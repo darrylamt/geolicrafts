@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
+import { coverFor, DEFAULT_COVER } from '../lib/blog'
+import Seo from '../components/ui/Seo'
 
 const FALLBACK_POSTS = [
   {
@@ -19,7 +21,7 @@ In 2004, Akologo started Geolicrafts with just five workers. Two decades later, 
 
 "I always believed that our hands — the craft in our hands — could build this nation," Akologo told The Business & Financial Times. "We are not just making drums and baskets. We are building a legacy."
 
-![George Akologo with hand-crafted djembe drums at the Dodowa workshop](/pics/founder.jpeg "George Akologo in his element — surrounded by drums crafted by his team")
+![George Akologo with hand-crafted djembe drums at the Dodowa workshop](/pics/founder.webp "George Akologo in his element — surrounded by drums crafted by his team")
 
 ## Exporting Culture to the World
 
@@ -31,13 +33,13 @@ Products include:
 - **Hand-carved wooden sculptures and masks**
 - **Fashion and textile items**
 
-![The export warehouse — hundreds of drums packed and ready to ship](/pics/warehouse2.jpeg "Geolicrafts' warehouse holds hundreds of finished products ready for international shipment")
+![The export warehouse — hundreds of drums packed and ready to ship](/pics/warehouse2.webp "Geolicrafts' warehouse holds hundreds of finished products ready for international shipment")
 
 ## The Craft Process
 
 Every drum begins as a raw log. Artisans shape the body by hand, stretch and lace the goat-skin head, and finish each piece with traditional carvings or rope detailing. No two drums are identical — each carries the maker's individual touch.
 
-![Artisan hand-carving a djembe drum body at the Dodowa workshop](/pics/process.jpeg "A Geolicrafts artisan at work — each djembe takes hours of careful carving")
+![Artisan hand-carving a djembe drum body at the Dodowa workshop](/pics/process.webp "A Geolicrafts artisan at work — each djembe takes hours of careful carving")
 
 ## The Training Centre Vision
 
@@ -64,7 +66,7 @@ The CEO believes the handicraft sector, if properly supported, could rival Ghana
     content: `
 In 2023, Geolicrafts Company Limited achieved a landmark milestone: the opening of a purpose-built vocational training centre in Dodowa, Greater Accra Region — funded by over **1.03 million Euros (approximately $1.1 million USD)** from the Invest for Employment (IFE) Facility.
 
-![The Geolicrafts team and the IFE delegation at the official visit in Dodowa](/pics/ife/group-pic.jpeg "Geolicrafts staff and the IFE delegation — KfW Bank and German Embassy representatives — at the Dodowa compound")
+![The Geolicrafts team and the IFE delegation at the official visit in Dodowa](/pics/ife/group-pic.webp "Geolicrafts staff and the IFE delegation — KfW Bank and German Embassy representatives — at the Dodowa compound")
 
 ## What is the Invest for Employment (IFE) Facility?
 
@@ -72,7 +74,7 @@ The Invest for Employment Facility is a German Development Cooperation initiativ
 
 Geolicrafts was selected as a beneficiary because of its proven track record exporting authentic Ghanaian handicrafts to Europe and the USA, and its commitment to community empowerment.
 
-![George Akologo presents a hand-carved gift to the IFE delegation](/pics/ife/ife2.jpeg "A ceremonial exchange — George Akologo presents the IFE delegation with a hand-crafted piece")
+![George Akologo presents a hand-carved gift to the IFE delegation](/pics/ife/ife2.webp "A ceremonial exchange — George Akologo presents the IFE delegation with a hand-crafted piece")
 
 ## The Grant: What It Funds
 
@@ -86,9 +88,9 @@ The IFE grant of over 1.03 million Euros enabled Geolicrafts to:
 
 The IFE delegation — including representatives from KfW Bank and the German Embassy — visited Geolicrafts' Dodowa compound for the official groundbreaking ceremony. They toured the existing production floor, saw artisans at work carving djembe drums and weaving baskets, and witnessed firsthand the scale of the company's operation before breaking ground on the new facility.
 
-![Officials and Geolicrafts team break ground at the new training centre site in Dodowa](/pics/ife/ife3.jpeg "The groundbreaking moment — officials and the Geolicrafts team mark the start of construction")
+![Officials and Geolicrafts team break ground at the new training centre site in Dodowa](/pics/ife/ife3.webp "The groundbreaking moment — officials and the Geolicrafts team mark the start of construction")
 
-[gallery]/pics/ife/ife4.jpeg,/pics/ife/ife5.jpeg,/pics/ife/ife6.jpeg
+[gallery]/pics/ife/ife4.jpeg,/pics/ife/ife5.webp,/pics/ife/ife6.webp
 
 ## Who Gets Trained?
 
@@ -99,7 +101,7 @@ The training programme specifically targets:
 
 Trainees receive instruction in straw basket weaving, Bolga-style craft techniques, traditional wood carving, sewing, and fashion design — each of which feeds directly into Geolicrafts' export supply chain.
 
-![Women training in fashion design and sewing at the Dodowa centre](/pics/training.jpeg "Trainees at sewing machines — fashion design is one of four disciplines offered at the centre")
+![Women training in fashion design and sewing at the Dodowa centre](/pics/training.webp "Trainees at sewing machines — fashion design is one of four disciplines offered at the centre")
 
 ## A Vision for the Future
 
@@ -107,7 +109,7 @@ Trainees receive instruction in straw basket weaving, Bolga-style craft techniqu
 
 The training centre is not just a facility — it is a pipeline. As trainees graduate, they either join Geolicrafts' workforce directly or set up their own micro-enterprises supplying Geolicrafts with finished goods for export. This model turns a single grant into a multiplier of economic impact across the Dodowa community and beyond.
 
-![The new Dodowa Training Centre building — partially complete at time of visit](/pics/trainingschoolbuilding.jpeg "The training centre building taking shape in Dodowa, funded by the IFE grant")
+![The new Dodowa Training Centre building — partially complete at time of visit](/pics/trainingschoolbuilding.webp "The training centre building taking shape in Dodowa, funded by the IFE grant")
 
 ## By the Numbers
 
@@ -118,7 +120,7 @@ The training centre is not just a facility — it is a pipeline. As trainees gra
 - **Dodowa, Greater Accra** — home to Geolicrafts' main office and production facility
     `,
     category: 'Community',
-    image_url: '/pics/ife/group-pic.jpeg',
+    image_url: '/pics/ife/group-pic.webp',
     published_at: '2023-06-15',
     read_time: 6,
   },
@@ -132,7 +134,7 @@ Few objects capture the spirit of Ghanaian craft quite like the Bolga basket. Ha
 
 At Geolicrafts, Bolga baskets are one of our most exported product lines — and they represent something much more than a beautiful object.
 
-![Artisans weaving Bolga baskets at the Dodowa workshop](/pics/workers1.jpeg "Two artisans at the Geolicrafts workshop — the basket weaving process is entirely done by hand")
+![Artisans weaving Bolga baskets at the Dodowa workshop](/pics/workers1.webp "Two artisans at the Geolicrafts workshop — the basket weaving process is entirely done by hand")
 
 ## What Makes a Bolga Basket?
 
@@ -145,7 +147,7 @@ The Bolga basket takes its name from Bolgatanga, the city in Ghana's Upper East 
 
 The process starts with harvesting the grass, drying it, splitting the strands, and then weaving them in tight spirals from the base upward. A skilled weaver can produce one medium basket in roughly two days.
 
-![Colourful Bolga round baskets ready for export](/pics/process2.jpeg "Finished basket products lined up at the Geolicrafts production floor")
+![Colourful Bolga round baskets ready for export](/pics/process2.webp "Finished basket products lined up at the Geolicrafts production floor")
 
 ## A Women-Led Craft Economy
 
@@ -157,7 +159,7 @@ These women earn directly from their craft, supporting families and communities 
 
 Geolicrafts sources, quality-checks, and exports Bolga baskets from our Dodowa compound. Our export warehouse holds ready-to-ship stock at all times — baskets nested and packed for sea freight to Germany, Italy, the Netherlands, the UK, and the United States.
 
-![The Geolicrafts export warehouse — baskets and drums ready for international shipment](/pics/warehouse1.jpeg "The Dodowa warehouse: Bolga baskets stacked alongside drums and other handicrafts ready for export")
+![The Geolicrafts export warehouse — baskets and drums ready for international shipment](/pics/warehouse1.webp "The Dodowa warehouse: Bolga baskets stacked alongside drums and other handicrafts ready for export")
 
 In 2021 alone, Geolicrafts exported products worth 771,000 euros — a significant portion of which came from basket and woven goods.
 
@@ -189,7 +191,7 @@ In Ghana, the drum is not merely a musical instrument. It is a language. Traditi
 
 Every drum that leaves our Dodowa workshop is hand-carved by a skilled artisan. No two are identical. Each carries the mark of the hands that made it.
 
-![A Geolicrafts artisan hand-carving a djembe drum body from raw wood](/pics/process.jpeg "The carving process: raw Tweneboa logs are shaped entirely by hand into drum bodies")
+![A Geolicrafts artisan hand-carving a djembe drum body from raw wood](/pics/process.webp "The carving process: raw Tweneboa logs are shaped entirely by hand into drum bodies")
 
 ## The Wood
 
@@ -208,15 +210,15 @@ Drum-making at Geolicrafts follows a step-by-step process that has changed littl
 - **5. Skin preparation** — goat skin is cleaned, soaked, and stretched over the drum head
 - **6. Lacing** — the skin is pulled tight and secured with rope in traditional patterns
 
-![Artisan finishing work on a drum body — multiple drums visible in background](/pics/process1.jpeg "An artisan tightening the rope lacing on a completed drum body at the Dodowa workshop")
+![Artisan finishing work on a drum body — multiple drums visible in background](/pics/process1.webp "An artisan tightening the rope lacing on a completed drum body at the Dodowa workshop")
 
 ## Inside the Workshop
 
 Our main production floor in Dodowa is where the carving happens. At any given time, dozens of drums are at various stages of completion — some just rough-shaped logs, others fully carved and awaiting their skins.
 
-![The Geolicrafts drum workshop — artisans carving in the open-air production area](/pics/workers.jpeg "The main production floor: artisans work on multiple drums simultaneously")
+![The Geolicrafts drum workshop — artisans carving in the open-air production area](/pics/workers.webp "The main production floor: artisans work on multiple drums simultaneously")
 
-[gallery]/pics/process.jpeg,/pics/workers1.jpeg,/pics/warehouse2.jpeg
+[gallery]/pics/process.jpeg,/pics/workers1.webp,/pics/warehouse2.webp
 
 ## Our Drum Range
 
@@ -233,7 +235,7 @@ Geolicrafts produces a full range of West African percussion instruments:
 
 The majority of our drums are exported to Europe and the United States — destined for music schools, percussion teachers, world music retailers, and collectors. We ship by sea freight in specially prepared containers to protect the instruments.
 
-![The export warehouse — hundreds of drums stacked and ready for shipment](/pics/warehouse2.jpeg "Ready for the world: Geolicrafts' warehouse holds hundreds of finished drums awaiting export")
+![The export warehouse — hundreds of drums stacked and ready for shipment](/pics/warehouse2.webp "Ready for the world: Geolicrafts' warehouse holds hundreds of finished drums awaiting export")
 
 Interested in wholesale drum orders? Contact us at info@geolicraftsgh.com — we supply individual units and full container loads.
     `,
@@ -374,7 +376,7 @@ export default function BlogPost() {
 
   return (
     <article className="pt-28 md:pt-36 pb-20 md:pb-28">
-      <title>{`${post.title} — Geolicrafts`}</title>
+      <Seo title={post.title} description={post.excerpt} image={coverFor(post)} type="article" />
       <header className="container-page max-w-3xl text-center animate-fade-up">
         <Link to="/blog" className="btn-ghost btn-sm mb-10">
           <ArrowLeft size={14} /> {t('blog.back')}
@@ -392,10 +394,10 @@ export default function BlogPost() {
       <div className="container-page mt-12 md:mt-16">
         <div className="rounded-[2rem] overflow-hidden aspect-[16/10] md:aspect-[21/9] bg-stone-200">
           <img
-            src={post.image_url}
+            src={coverFor(post)}
             alt={post.title}
             className="w-full h-full object-cover"
-            onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/pics/process.jpeg' }}
+            onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_COVER }}
           />
         </div>
       </div>

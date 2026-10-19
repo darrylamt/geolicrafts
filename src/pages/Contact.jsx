@@ -6,6 +6,7 @@ import PageHeader from '../components/ui/PageHeader'
 import Honeypot from '../components/ui/Honeypot'
 import { WhatsAppIcon } from '../components/ui/WhatsAppButton'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
 import { submitEnquiry } from '../lib/enquiry'
 import { SITE, whatsappLink } from '../lib/site'
 
@@ -49,6 +50,7 @@ export default function Contact() {
 
   return (
     <>
+      <Seo title={t('nav.contact')} description={t('contact.intro')} />
       <PageHeader
         eyebrow={t('contact.eyebrow')}
         title={<>{t('contact.title')} <em className="text-clay-600">{t('contact.titleEm')}</em></>}

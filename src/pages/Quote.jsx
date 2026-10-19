@@ -6,6 +6,7 @@ import PageHeader from '../components/ui/PageHeader'
 import QtyStepper from '../components/ui/QtyStepper'
 import Honeypot from '../components/ui/Honeypot'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
 import { useQuote } from '../context/QuoteContext'
 import { submitEnquiry } from '../lib/enquiry'
 import { onImgError } from '../lib/products'
@@ -56,6 +57,7 @@ export default function Quote() {
 
   return (
     <>
+      <Seo title={t('quote.pageEyebrow')} description={t('quote.pageIntro')} />
       <PageHeader
         eyebrow={t('quote.pageEyebrow')}
         title={<>{t('quote.pageTitle')} <em className="text-clay-600">{t('quote.pageTitleEm')}</em></>}

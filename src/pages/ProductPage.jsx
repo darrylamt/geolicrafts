@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Check, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
 import { useQuote } from '../context/QuoteContext'
 import { useProducts, findProduct, galleryFor, imageFor, quoteEntry, onImgError } from '../lib/products'
 import { productPath, whatsappLink } from '../lib/site'
@@ -75,8 +76,7 @@ function ProductDetail({ product, products }) {
 
   return (
     <>
-      <title>{`${product.name} — Geolicrafts`}</title>
-      {product.description && <meta name="description" content={product.description} />}
+      <Seo title={product.name} description={product.description} image={imageFor(product)} type="product" />
 
       <section className="pt-24 md:pt-32 pb-20 md:pb-28">
         <div className="container-page">

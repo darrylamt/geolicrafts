@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
+import { useProducts, imageFor, onImgError } from '../lib/products'
+import { useTestimonials, usePartners } from '../lib/content'
+import { productPath } from '../lib/site'
 
 /* ── image constants ── */
 const IMG = {
@@ -8,12 +12,12 @@ const IMG = {
   roundBasket: '/images/products/bolga-basket-round.webp',
   mask:        '/images/products/carved-mask.webp',
   // Real on-site photos
-  workshop:  '/pics/workers.jpeg',
-  process:   '/pics/process.jpeg',
-  workers1:  '/pics/workers1.jpeg',
-  training:  '/pics/training.jpeg',
-  warehouse: '/pics/warehouse2.jpeg',
-  founder:   '/pics/founder.jpeg',
+  workshop:  '/pics/workers.webp',
+  process:   '/pics/process.webp',
+  workers1:  '/pics/workers1.webp',
+  training:  '/pics/training.webp',
+  warehouse: '/pics/warehouse2.webp',
+  founder:   '/pics/founder.webp',
 }
 
 // Paired by index with home.collections.items in the dictionaries
@@ -41,6 +45,7 @@ export default function Home() {
 
   return (
     <div>
+      <Seo description={t('home.intro')} />
       {/* ─── Hero ─── */}
       <section className="pt-32 md:pt-44 pb-20 md:pb-28">
         <div className="container-page">
@@ -69,6 +74,7 @@ export default function Home() {
             <img
               src={IMG.workshop}
               alt="Geolicrafts artisans carving drums at the Dodowa workshop"
+              fetchPriority="high"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent" />
@@ -131,6 +137,8 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <FeaturedProducts />
 
       {/* ─── Story ─── */}
       <section className="py-20 md:py-28">
@@ -267,6 +275,8 @@ export default function Home() {
         </div>
       </section>
 
+      <Testimonials />
+
       {/* ─── CTA ─── */}
       <section className="pb-20 md:pb-28">
         <div className="container-page">
@@ -284,5 +294,112 @@ export default function Home() {
         </div>
       </section>
     </div>
+  )
+}
+
+// Shown only when products are marked "featured" in the admin
+function FeaturedProducts() {
+  const { t, tc } = useI18n()
+  const { products } = useProducts()
+  const featured = products.filter(p => p.featured).slice(0, 4)
+  if (featured.length === 0) return null
+
+  return (
+    <section className="py-20 md:py-28">
+      <div className="container-page">
+        <SectionHead
+          eyebrow={t('home.featured.eyebrow')}
+          title={t('home.featured.title')}
+          action={
+            <Link to="/products" className="link-arrow hidden md:inline-flex shrink-0">
+              {t('home.collections.viewAll')} <ArrowRight size={15} />
+            </Link>
+          }
+        />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6">
+          {featured.map(p => (
+            <Link key={p.id} to={productPath(p)} className="group">
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-stone-100">
+                <img
+                  src={imageFor(p)}
+                  alt={p.name}
+                  loading="lazy"
+                  decoding="async"
+                  onError={onImgError}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                />
+              </div>
+              <p className="mt-4 text-xs text-stone-500">{tc(p.category)}</p>
+              <h3 className="mt-1 font-sans text-[15px] font-medium tracking-normal text-stone-900 group-hover:text-clay-700 transition-colors">
+                {p.name}
+              </h3>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Shown only once testimonials or partner logos are added in Admin → Testimonials
+function Testimonials() {
+  const { t } = useI18n()
+  const testimonials = useTestimonials()
+  const partners = usePartners()
+  if (testimonials.length === 0 && partners.length === 0) return null
+
+  return (
+    <section className="py-20 md:py-28 bg-white">
+      <div className="container-page">
+        {testimonials.length > 0 && (
+          <>
+            <SectionHead eyebrow={t('home.trust.eyebrow')} title={t('home.trust.title')} />
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {testimonials.slice(0, 6).map(item => (
+                <figure key={item.id} className="rounded-2xl bg-stone-50 ring-1 ring-stone-200/70 p-7 md:p-8 flex flex-col">
+                  <blockquote className="font-display text-2xl leading-snug text-stone-900 flex-1">“{item.quote}”</blockquote>
+                  <figcaption className="mt-8 flex items-center gap-3">
+                    <span className="grid place-items-center h-10 w-10 shrink-0 rounded-full bg-clay-100 text-clay-700 text-sm font-semibold uppercase">
+                      {item.name?.[0]}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium text-stone-900">{item.name}</span>
+                      <span className="block text-xs text-stone-500 truncate">
+                        {[item.role, item.company, item.country].filter(Boolean).join(' · ')}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </>
+        )}
+
+        {partners.length > 0 && (
+          <div className={testimonials.length > 0 ? 'mt-20' : ''}>
+            <p className="eyebrow text-center mb-10">{t('home.trust.partners')}</p>
+            <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
+              {partners.map(partner => {
+                const logo = (
+                  <img
+                    src={partner.logo_url}
+                    alt={partner.name}
+                    loading="lazy"
+                    className="h-10 md:h-12 w-auto max-w-[160px] object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition"
+                  />
+                )
+                return (
+                  <li key={partner.id}>
+                    {partner.website
+                      ? <a href={partner.website} target="_blank" rel="noopener noreferrer" title={partner.name}>{logo}</a>
+                      : logo}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }

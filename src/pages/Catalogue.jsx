@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Download } from 'lucide-react'
 import { useI18n } from '../i18n'
-import { useProducts, imageFor, onImgError, CATEGORIES } from '../lib/products'
+import Seo from '../components/ui/Seo'
+import { useProducts, imageFor, onImgError } from '../lib/products'
+import { useCategories } from '../lib/content'
 import { SITE } from '../lib/site'
 import LanguageSwitcher from '../components/ui/LanguageSwitcher'
 
@@ -11,9 +13,8 @@ export default function Catalogue() {
   const { t, tc, formatDate } = useI18n()
   const { products, loading } = useProducts()
 
-  // Known categories first, then anything else found in the data
-  const extra = [...new Set(products.map(p => p.category))].filter(c => !CATEGORIES.includes(c))
-  const sections = [...CATEGORIES, ...extra]
+  // Admin-defined category order, then anything else found in the data
+  const sections = useCategories(products)
     .map(cat => ({ cat, items: products.filter(p => p.category === cat) }))
     .filter(s => s.items.length)
 
@@ -21,7 +22,7 @@ export default function Catalogue() {
 
   return (
     <div className="catalogue bg-stone-200 min-h-screen print:bg-white">
-      <title>{`${t('catalogue.title')} — Geolicrafts`}</title>
+      <Seo title={t('catalogue.title')} description={t('catalogue.subtitle')} />
       <style>{`
         @page { size: A4; margin: 14mm 12mm; }
         @media print {
@@ -69,7 +70,7 @@ export default function Catalogue() {
               <p className="mt-6 text-lg text-stone-500 max-w-md">{t('catalogue.subtitle')}</p>
             </div>
             <div className="h-56 rounded-2xl overflow-hidden bg-stone-200">
-              <img src="/pics/workers.jpeg" alt="" className="w-full h-full object-cover" />
+              <img src="/pics/workers.webp" alt="" className="w-full h-full object-cover" />
             </div>
             <div className="mt-10 grid sm:grid-cols-2 gap-8 text-sm">
               <div>

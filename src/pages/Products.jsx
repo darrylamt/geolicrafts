@@ -5,19 +5,23 @@ import toast from 'react-hot-toast'
 import PageHeader from '../components/ui/PageHeader'
 import Pagination from '../components/ui/Pagination'
 import { useI18n } from '../i18n'
+import Seo from '../components/ui/Seo'
 import { useQuote } from '../context/QuoteContext'
-import { useProducts, imageFor, quoteEntry, onImgError, CATEGORIES } from '../lib/products'
+import { useProducts, imageFor, quoteEntry, onImgError } from '../lib/products'
+import { useCategories } from '../lib/content'
 import { productPath } from '../lib/site'
 
 const PAGE_SIZE = 12
-const ALL_CATEGORIES = ['All', ...CATEGORIES]
+const SORTS = ['featured', 'newest', 'name']
 
 export default function Products() {
   const { products, loading } = useProducts()
   const { t, tc } = useI18n()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [sort, setSort] = useState('featured')
   const [params, setParams] = useSearchParams()
+  const ALL_CATEGORIES = ['All', ...useCategories(products)]
   const searchRef = useRef()
   const gridRef = useRef()
 
@@ -28,6 +32,9 @@ export default function Products() {
     const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
     return matchesSearch && (category === 'All' || p.category === category)
   })
+  // Products arrive in the "featured" order; other sorts are applied on top
+  if (sort === 'newest') filtered.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+  if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name))
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -51,6 +58,7 @@ export default function Products() {
 
   return (
     <>
+      <Seo title={category === 'All' ? t('nav.collections') : tc(category)} description={t('products.intro')} />
       <PageHeader
         eyebrow={t('products.eyebrow')}
         title={<>{t('products.title')} <em className="text-clay-600">{t('products.titleEm')}</em></>}
@@ -131,11 +139,22 @@ export default function Products() {
                   {filtered.length === 1 ? t('products.piece') : t('products.pieces', { count: filtered.length })}
                   {category !== 'All' && <> {t('products.in')} <span className="text-stone-900">{tc(category)}</span></>}
                 </p>
-                {hasActiveFilter && (
-                  <button onClick={clearAll} className="btn-ghost btn-sm -mr-3">
-                    <X size={14} /> {t('common.clear')}
-                  </button>
-                )}
+                <div className="flex items-center gap-1">
+                  {hasActiveFilter && (
+                    <button onClick={clearAll} className="btn-ghost btn-sm">
+                      <X size={14} /> {t('common.clear')}
+                    </button>
+                  )}
+                  <label className="sr-only" htmlFor="sort">{t('products.sort')}</label>
+                  <select
+                    id="sort"
+                    value={sort}
+                    onChange={e => { setSort(e.target.value); setPage(1) }}
+                    className="input h-9 w-auto rounded-full text-[13px] bg-transparent ring-0 hover:bg-stone-900/5 focus:ring-2"
+                  >
+                    {SORTS.map(s => <option key={s} value={s}>{t(`products.sort_${s}`)}</option>)}
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-12">
@@ -195,6 +214,11 @@ function ProductCard({ product }) {
         >
           {inQuote ? <Check size={16} /> : <Plus size={16} />}
         </button>
+        {product.featured && (
+          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-stone-900 shadow-sm">
+            {t('products.featured')}
+          </span>
+        )}
       </div>
       <p className="mt-4 text-xs text-stone-500">{tc(product.category)}</p>
       <h3 className="mt-1 font-sans text-[15px] font-medium tracking-normal text-stone-900 leading-snug group-hover:text-clay-700 transition-colors">

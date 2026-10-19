@@ -5,30 +5,13 @@ import { supabase } from '../lib/supabase'
 import PageHeader from '../components/ui/PageHeader'
 import Pagination from '../components/ui/Pagination'
 import { useI18n } from '../i18n'
+import { coverFor, DEFAULT_COVER } from '../lib/blog'
+import Seo from '../components/ui/Seo'
 
 const PAGE_SIZE = 9
 
-// Local images guaranteed to exist — used for both fallback posts and to patch Supabase posts
-const LOCAL_IMAGES = {
-  'geolicrafts-ceo-vision':   '/pics/founder.jpeg',
-  'training-centre-dodowa':   '/pics/ife/group-pic.jpeg',
-  'bolga-baskets-global':     '/pics/workers1.jpeg',
-  'drums-cultural-heritage':  '/pics/process.jpeg',
-}
-const CATEGORY_IMAGES = {
-  'News':      '/pics/founder.jpeg',
-  'Community': '/pics/training.jpeg',
-  'Crafts':    '/pics/process.jpeg',
-}
-const DEFAULT_IMG = '/pics/process.jpeg'
-
-// Guarantee every post has a working image_url
-function withImage(post) {
-  return {
-    ...post,
-    image_url: LOCAL_IMAGES[post.slug] || CATEGORY_IMAGES[post.category] || DEFAULT_IMG,
-  }
-}
+// Guarantee every post has a working cover image
+const withImage = post => ({ ...post, image_url: coverFor(post) })
 
 const FALLBACK_POSTS = [
   {
@@ -69,7 +52,7 @@ const FALLBACK_POSTS = [
   },
 ].map(withImage)
 
-const onImgError = e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }
+const onImgError = e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_COVER }
 
 function Meta({ post }) {
   const { t, formatDate } = useI18n()
@@ -122,6 +105,7 @@ export default function Blog() {
 
   return (
     <>
+      <Seo title={t('nav.journal')} description={t('blog.intro')} />
       <PageHeader
         eyebrow={t('blog.eyebrow')}
         title={<>{t('blog.title')} <em className="text-clay-600">{t('blog.titleEm')}</em></>}

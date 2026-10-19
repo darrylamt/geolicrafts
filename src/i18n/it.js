@@ -77,6 +77,15 @@ export default {
         { title: 'Artigianato e moda', items: 'Maschere · Ventagli in tessuto · Cappelli di paglia · Campanelli' },
       ],
     },
+    featured: {
+      eyebrow: 'In evidenza',
+      title: 'I pezzi che amiamo ora.',
+    },
+    trust: {
+      eyebrow: 'Apprezzati nel mondo',
+      title: 'Cosa dicono i nostri clienti.',
+      partners: 'Alcuni dei rivenditori e partner con cui lavoriamo',
+    },
     story: {
       eyebrow: 'La nostra storia',
       title: 'Da un laboratorio di cinque a una squadra di sessantacinque.',
@@ -154,6 +163,11 @@ export default {
     addToQuote: 'Aggiungi al preventivo',
     added: 'Aggiunto alla lista preventivo',
     inQuote: 'Nella lista preventivo',
+    sort: 'Ordina per',
+    sort_featured: 'In evidenza',
+    sort_newest: 'Più recenti',
+    sort_name: 'Nome A–Z',
+    featured: 'In evidenza',
   },
 
   product: {

@@ -77,6 +77,15 @@ export default {
         { title: 'Crafts & Fashion', items: 'Masks · Fabric fans · Straw hats · Bells' },
       ],
     },
+    featured: {
+      eyebrow: 'Featured',
+      title: 'Pieces we love right now.',
+    },
+    trust: {
+      eyebrow: 'Trusted worldwide',
+      title: 'What our buyers say.',
+      partners: 'Some of the retailers and partners we work with',
+    },
     story: {
       eyebrow: 'Our story',
       title: 'From a workshop of five to a team of sixty-five.',
@@ -154,6 +163,11 @@ export default {
     addToQuote: 'Add to quote list',
     added: 'Added to your quote list',
     inQuote: 'In quote list',
+    sort: 'Sort by',
+    sort_featured: 'Featured',
+    sort_newest: 'Newest',
+    sort_name: 'Name A–Z',
+    featured: 'Featured',
   },
 
   product: {

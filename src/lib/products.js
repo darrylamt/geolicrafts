@@ -26,6 +26,16 @@ export const quoteEntry = p => ({ id: p.id, name: p.name, category: p.category, 
 
 export const onImgError = e => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG }
 
+// Default shop order: featured first, then manual sort order (empty last), then newest
+export function sortProducts(list) {
+  const order = p => (p.sort_order == null ? Number.MAX_SAFE_INTEGER : p.sort_order)
+  return [...list].sort((a, b) =>
+    (b.featured === true) - (a.featured === true) ||
+    order(a) - order(b) ||
+    String(b.created_at || '').localeCompare(String(a.created_at || ''))
+  )
+}
+
 // One fetch shared by every page during a visit
 let cache = null
 function fetchAll() {
@@ -34,7 +44,7 @@ function fetchAll() {
       .from('products')
       .select('*')
       .order('created_at', { ascending: false })
-      .then(({ data, error }) => (error || !data?.length ? FALLBACK_PRODUCTS : data))
+      .then(({ data, error }) => sortProducts(error || !data?.length ? FALLBACK_PRODUCTS : data))
   }
   return cache
 }
