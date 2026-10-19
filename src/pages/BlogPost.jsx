@@ -52,7 +52,7 @@ Geolicrafts has ambitious plans: international craft exhibitions, collaboration 
 The CEO believes the handicraft sector, if properly supported, could rival Ghana's cocoa and gold exports. "We have the talent, the heritage, and the creativity. What we need is the platform — and we are building it."
     `,
     category: 'News',
-    image_url: 'https://geolicrafts.com/wp-content/uploads/2023/02/Geolicrafts-Website-Banner-01.jpg',
+    image_url: '/images/products/banner.webp',
     published_at: '2023-12-08',
     read_time: 5,
   },
@@ -175,7 +175,7 @@ In 2021 alone, Geolicrafts exported products worth 771,000 euros — a significa
 We supply to individual buyers, boutique retailers, and wholesale importers. Contact us at info@geolicraftsgh.com for current pricing, minimum order quantities, and lead times.
     `,
     category: 'Crafts',
-    image_url: 'https://geolicrafts.com/wp-content/uploads/2023/05/G-158-no-handle-round-primary.jpg',
+    image_url: '/images/products/bolga-basket-round.webp',
     published_at: '2023-03-20',
     read_time: 6,
   },
@@ -238,7 +238,7 @@ The majority of our drums are exported to Europe and the United States — desti
 Interested in wholesale drum orders? Contact us at info@geolicraftsgh.com — we supply individual units and full container loads.
     `,
     category: 'Crafts',
-    image_url: 'https://geolicrafts.com/wp-content/uploads/2023/05/465c92b360326a2a3dc707771cc4e622-drums-instruments.jpg',
+    image_url: '/images/products/dundum-drums.webp',
     published_at: '2022-11-10',
     read_time: 7,
   },

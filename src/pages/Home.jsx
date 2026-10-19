@@ -4,9 +4,9 @@ import { useI18n } from '../i18n'
 
 /* ── image constants ── */
 const IMG = {
-  dundum:      'https://geolicrafts.com/wp-content/uploads/2023/05/465c92b360326a2a3dc707771cc4e622-drums-instruments.jpg',
-  roundBasket: 'https://geolicrafts.com/wp-content/uploads/2023/05/G-158-no-handle-round-primary.jpg',
-  mask:        'https://geolicrafts.com/wp-content/uploads/2023/05/9oNj9bg.jpg',
+  dundum:      '/images/products/dundum-drums.webp',
+  roundBasket: '/images/products/bolga-basket-round.webp',
+  mask:        '/images/products/carved-mask.webp',
   // Real on-site photos
   workshop:  '/pics/workers.jpeg',
   process:   '/pics/process.jpeg',
