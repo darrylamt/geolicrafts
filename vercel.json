@@ -16,7 +16,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/drums/:rest*",
+      "source": "/index.php/product-category/drums/(.*)",
       "destination": "/products?category=Musical%20Instruments",
       "permanent": true
     },
@@ -26,7 +26,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/percussion-instrument/:rest*",
+      "source": "/index.php/product-category/percussion-instrument/(.*)",
       "destination": "/products?category=Musical%20Instruments",
       "permanent": true
     },
@@ -36,7 +36,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/xylophone/:rest*",
+      "source": "/index.php/product-category/xylophone/(.*)",
       "destination": "/products?category=Musical%20Instruments",
       "permanent": true
     },
@@ -46,7 +46,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/baskets/:rest*",
+      "source": "/index.php/product-category/baskets/(.*)",
       "destination": "/products?category=Baskets%20%26%20Weaving",
       "permanent": true
     },
@@ -56,7 +56,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/straw-hat/:rest*",
+      "source": "/index.php/product-category/straw-hat/(.*)",
       "destination": "/products?category=Baskets%20%26%20Weaving",
       "permanent": true
     },
@@ -66,7 +66,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/fruit-bowl/:rest*",
+      "source": "/index.php/product-category/fruit-bowl/(.*)",
       "destination": "/products?category=Baskets%20%26%20Weaving",
       "permanent": true
     },
@@ -76,7 +76,7 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/african-mask/:rest*",
+      "source": "/index.php/product-category/african-mask/(.*)",
       "destination": "/products?category=Wood%20Carvings",
       "permanent": true
     },
@@ -86,12 +86,12 @@
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/fabric-fans/:rest*",
+      "source": "/index.php/product-category/fabric-fans/(.*)",
       "destination": "/products?category=Textiles%20%26%20Fashion",
       "permanent": true
     },
     {
-      "source": "/index.php/product-category/:rest*",
+      "source": "/index.php/product-category/(.*)",
       "destination": "/products",
       "permanent": true
     },
@@ -126,17 +126,17 @@
       "permanent": true
     },
     {
-      "source": "/index.php/:year(2018|2019|2020|2021|2022|2023|2024|2025|2026)/:rest*",
+      "source": "/index.php/:year(2018|2019|2020|2021|2022|2023|2024|2025|2026)/(.*)",
       "destination": "/blog",
       "permanent": true
     },
     {
-      "source": "/index.php/:rest*",
+      "source": "/index.php/(.*)",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/wp-admin/:rest*",
+      "source": "/wp-admin/(.*)",
       "destination": "/admin",
       "permanent": false
     },
