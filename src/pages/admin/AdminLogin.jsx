@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
+import Logo from '../../components/ui/Logo'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -19,79 +20,82 @@ export default function AdminLogin() {
     if (error) {
       toast.error(error.message || 'Invalid credentials')
     } else {
-      toast.success('Welcome back!')
+      toast.success('Welcome back')
       navigate('/admin')
     }
     setLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-earth-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <span className="font-display text-3xl font-bold text-white">
-            Geoli<span className="text-brand-400">crafts</span>
-          </span>
-          <p className="text-earth-400 mt-2 text-sm">Admin Portal</p>
+    <div className="min-h-screen grid lg:grid-cols-2 bg-stone-50">
+      <div className="flex flex-col px-5 sm:px-10 py-8">
+        <div className="flex items-center justify-between">
+          <Logo />
+          <Link to="/" className="btn-ghost btn-sm -mr-3">
+            <ArrowLeft size={14} /> Site
+          </Link>
         </div>
 
-        <div className="bg-earth-900 rounded-2xl p-8 shadow-2xl border border-earth-800">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
-              <Lock size={18} className="text-white" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl font-bold text-white">Sign In</h1>
-              <p className="text-earth-400 text-xs">Authorised personnel only</p>
-            </div>
-          </div>
+        <div className="flex-1 flex items-center justify-center py-16">
+          <div className="w-full max-w-sm animate-fade-up">
+            <h1 className="text-5xl text-stone-900 leading-none">Welcome back.</h1>
+            <p className="text-stone-500 mt-3 mb-10">Sign in to manage products, stories and messages.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-earth-300 mb-1.5">Email</label>
-              <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-earth-500" />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="email" className="label">Email</label>
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                   placeholder="admin@geolicrafts.com"
-                  className="w-full bg-earth-800 border border-earth-700 text-white placeholder-earth-500 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className="input"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-earth-300 mb-1.5">Password</label>
-              <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-earth-500" />
-                <input
-                  type={showPass ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  className="w-full bg-earth-800 border border-earth-700 text-white placeholder-earth-500 rounded-lg pl-10 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-earth-500 hover:text-earth-300"
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
+              <div>
+                <label htmlFor="password" className="label">Password</label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPass ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    className="input pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 icon-btn"
+                    aria-label={showPass ? 'Hide password' : 'Show password'}
+                  >
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-lg transition-colors mt-2 disabled:opacity-60"
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+              <button type="submit" disabled={loading} className="btn-primary btn-lg w-full !mt-8">
+                {loading ? 'Signing in…' : 'Sign in'}
+              </button>
+            </form>
+            <p className="text-xs text-stone-400 mt-8 text-center">Authorised personnel only.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden lg:block p-4">
+        <div className="relative h-full rounded-[2rem] overflow-hidden bg-stone-200">
+          <img src="/pics/process.jpeg" alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent" />
+          <p className="absolute bottom-10 left-10 right-10 font-display text-4xl text-white leading-tight">
+            “The wood speaks — our duty is simply to translate its language for the world.”
+          </p>
         </div>
       </div>
     </div>

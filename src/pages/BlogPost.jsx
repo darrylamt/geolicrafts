@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Calendar, Clock, ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 const FALLBACK_POSTS = [
@@ -251,61 +251,76 @@ function formatDate(dateStr) {
 
 function parseBold(text) {
   const parts = text.split(/\*\*(.*?)\*\*/g)
-  return parts.map((part, i) => i % 2 === 1 ? <strong key={i}>{part}</strong> : part)
+  return parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="font-semibold text-stone-900">{part}</strong> : part)
 }
 
 function renderContent(text) {
   if (!text) return null
-  return text.split('\n').map((line, i) => {
-    // ## Heading
-    if (line.startsWith('## ')) {
-      return <h2 key={i} className="font-display text-2xl font-bold text-earth-900 mt-10 mb-4">{line.slice(3)}</h2>
+  const blocks = []
+  let list = []
+
+  const flushList = key => {
+    if (list.length) {
+      blocks.push(
+        <ul key={`ul-${key}`} className="my-6 space-y-2.5">
+          {list.map((item, j) => (
+            <li key={j} className="relative pl-6 text-stone-700 leading-relaxed before:absolute before:left-0 before:top-[0.7em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-clay-500">
+              {parseBold(item)}
+            </li>
+          ))}
+        </ul>
+      )
+      list = []
     }
+  }
+
+  text.split('\n').forEach((raw, i) => {
+    const line = raw.trim()
+
     // Bullet list item
     if (line.startsWith('- ')) {
-      return <li key={i} className="text-earth-700 leading-relaxed ml-4 mb-1">{parseBold(line.slice(2))}</li>
+      list.push(line.slice(2))
+      return
     }
-    // Numbered list item  e.g. "- **1. Logging**"
+    flushList(i)
+
+    // ## Heading
+    if (line.startsWith('## ')) {
+      blocks.push(<h2 key={i} className="text-3xl md:text-4xl text-stone-900 mt-14 mb-5 leading-tight">{line.slice(3)}</h2>)
+      return
+    }
     // Inline image: ![alt](url) or ![alt](url "caption")
     if (line.startsWith('![')) {
       const match = line.match(/!\[([^\]]*)\]\(([^)"]+)(?:\s+"([^"]+)")?\)/)
       if (match) {
         const [, alt, url, caption] = match
-        return (
-          <figure key={i} className="my-8">
-            <img
-              src={url}
-              alt={alt}
-              className="w-full rounded-xl object-cover max-h-[480px]"
-            />
-            {caption && (
-              <figcaption className="text-center text-earth-400 text-xs mt-2 italic">{caption}</figcaption>
-            )}
+        blocks.push(
+          <figure key={i} className="my-10 md:-mx-16">
+            <img src={url} alt={alt} loading="lazy" className="w-full rounded-2xl object-cover max-h-[560px] bg-stone-200" />
+            {caption && <figcaption className="text-center text-stone-500 text-sm mt-3">{caption}</figcaption>}
           </figure>
         )
+        return
       }
     }
     // Photo gallery: [gallery]/url1,/url2,/url3
     if (line.startsWith('[gallery]')) {
       const urls = line.replace('[gallery]', '').split(',').map(u => u.trim()).filter(Boolean)
-      return (
-        <div key={i} className="grid grid-cols-3 gap-2 my-8">
+      blocks.push(
+        <div key={i} className="grid grid-cols-3 gap-2 md:gap-3 my-10 md:-mx-16">
           {urls.map((url, j) => (
-            <img
-              key={j}
-              src={url}
-              alt=""
-              className="w-full h-40 md:h-52 object-cover rounded-lg"
-            />
+            <img key={j} src={url} alt="" loading="lazy" className="w-full aspect-square object-cover rounded-xl bg-stone-200" />
           ))}
         </div>
       )
+      return
     }
-    // Empty line
-    if (line.trim() === '') return <br key={i} />
+    if (line === '') return
     // Normal paragraph
-    return <p key={i} className="text-earth-700 leading-relaxed mb-4">{parseBold(line)}</p>
+    blocks.push(<p key={i} className="text-stone-700 text-[17px] leading-[1.8] mb-6">{parseBold(line)}</p>)
   })
+  flushList('end')
+  return blocks
 }
 
 export default function BlogPost() {
@@ -340,71 +355,72 @@ export default function BlogPost() {
 
   if (loading) {
     return (
-      <div className="pt-32 max-w-3xl mx-auto px-4 animate-pulse space-y-4">
-        <div className="h-8 bg-earth-200 rounded w-3/4" />
-        <div className="h-4 bg-earth-100 rounded w-1/2" />
-        <div className="aspect-video bg-earth-200 rounded-2xl" />
+      <div className="pt-36 container-page max-w-3xl animate-pulse space-y-5">
+        <div className="h-3 w-1/4 rounded-full bg-stone-200" />
+        <div className="h-12 w-full rounded-full bg-stone-200" />
+        <div className="h-12 w-2/3 rounded-full bg-stone-200" />
+        <div className="aspect-[16/9] rounded-2xl bg-stone-200 !mt-12" />
       </div>
     )
   }
 
   if (notFound) {
     return (
-      <div className="pt-32 pb-16 text-center">
-        <h1 className="section-title">Post Not Found</h1>
-        <Link to="/blog" className="btn-primary mt-6">
-          <ArrowLeft size={18} /> Back to Blog
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-5 pt-24">
+        <p className="eyebrow mb-4">Journal</p>
+        <h1 className="text-5xl md:text-7xl text-stone-900 mb-8">Story not found.</h1>
+        <Link to="/blog" className="btn-primary">
+          <ArrowLeft size={16} /> Back to journal
         </Link>
       </div>
     )
   }
 
   return (
-    <>
-      {/* Hero image */}
-      <div className="pt-16 md:pt-20">
-        <div className="aspect-[16/6] overflow-hidden relative">
+    <article className="pt-28 md:pt-36 pb-20 md:pb-28">
+      <header className="container-page max-w-3xl text-center animate-fade-up">
+        <Link to="/blog" className="btn-ghost btn-sm mb-10">
+          <ArrowLeft size={14} /> Journal
+        </Link>
+        <p className="flex items-center justify-center gap-2 text-sm text-stone-500 mb-6">
+          <span className="text-clay-600 font-medium">{post.category}</span>
+          <span className="h-1 w-1 rounded-full bg-stone-300" />
+          {formatDate(post.published_at)}
+          <span className="h-1 w-1 rounded-full bg-stone-300" />
+          {post.read_time} min read
+        </p>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.02] text-stone-900">{post.title}</h1>
+      </header>
+
+      <div className="container-page mt-12 md:mt-16">
+        <div className="rounded-[2rem] overflow-hidden aspect-[16/10] md:aspect-[21/9] bg-stone-200">
           <img
             src={post.image_url}
             alt={post.title}
             className="w-full h-full object-cover"
             onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/pics/process.jpeg' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-earth-950/60 to-transparent" />
         </div>
       </div>
 
-      <article className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <Link to="/blog" className="btn-ghost pl-0 mb-6 inline-flex">
-          <ArrowLeft size={18} /> Back to Blog
-        </Link>
+      <div className="container-page max-w-2xl mt-14 md:mt-20">
+        {post.content ? renderContent(post.content) : (
+          <p className="text-stone-700 text-[17px] leading-[1.8]">{post.excerpt}</p>
+        )}
 
-        <span className="badge mb-4">{post.category}</span>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-earth-900 mb-6 leading-tight">
-          {post.title}
-        </h1>
-
-        <div className="flex items-center gap-6 text-earth-500 text-sm mb-8 pb-8 border-b border-earth-100">
-          <span className="flex items-center gap-2">
-            <Calendar size={16} /> {formatDate(post.published_at)}
-          </span>
-          <span className="flex items-center gap-2">
-            <Clock size={16} /> {post.read_time} min read
-          </span>
+        <div className="mt-16 pt-10 border-t border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <p className="font-medium text-stone-900">Interested in our work?</p>
+            <p className="text-sm text-stone-500">We supply individuals, retailers and wholesale importers.</p>
+          </div>
+          <div className="flex gap-2">
+            <Link to="/blog" className="btn-secondary">More stories</Link>
+            <Link to="/contact" className="btn-primary">
+              Get in touch <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
-
-        <div className="prose-custom">
-          {post.content ? renderContent(post.content) : (
-            <p className="text-earth-600">{post.excerpt}</p>
-          )}
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-earth-100">
-          <Link to="/blog" className="btn-secondary">
-            <ArrowLeft size={18} /> More Stories
-          </Link>
-        </div>
-      </article>
-    </>
+      </div>
+    </article>
   )
 }

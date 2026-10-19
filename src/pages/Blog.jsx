@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import KenteDivider from '../components/ui/KenteDivider'
+import PageHeader from '../components/ui/PageHeader'
+import Pagination from '../components/ui/Pagination'
+
+const PAGE_SIZE = 9
 
 // Local images guaranteed to exist — used for both fallback posts and to patch Supabase posts
 const LOCAL_IMAGES = {
@@ -67,14 +70,29 @@ const FALLBACK_POSTS = [
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
+    day: 'numeric', month: 'short', year: 'numeric',
   })
+}
+
+const onImgError = e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }
+
+function Meta({ post }) {
+  return (
+    <p className="flex items-center gap-2 text-xs text-stone-500">
+      <span className="text-clay-600 font-medium">{post.category}</span>
+      <span className="h-1 w-1 rounded-full bg-stone-300" />
+      {formatDate(post.published_at)}
+      <span className="h-1 w-1 rounded-full bg-stone-300" />
+      {post.read_time} min read
+    </p>
+  )
 }
 
 export default function Blog() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     async function load() {
@@ -97,41 +115,33 @@ export default function Blog() {
   const categories = ['All', ...new Set(posts.map(p => p.category))]
   const filtered = activeCategory === 'All' ? posts : posts.filter(p => p.category === activeCategory)
   const [featured, ...rest] = filtered
+  const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE))
+  const paginated = rest.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const changePage = p => {
+    setPage(p)
+    document.getElementById('latest')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   return (
     <>
-      {/* Header */}
-      <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
-          <div className="flex items-center justify-center gap-2 mb-5">
-            <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
-            <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
-            <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
-          </div>
-          <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
-            Blog & Stories
-          </span>
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            Our Stories
-          </h1>
-          <p className="text-forest-200 text-lg max-w-2xl mx-auto">
-            News, insights, and stories from the heart of Ghana's craft industry.
-          </p>
-        </div>
-        <KenteDivider height={10} />
-      </section>
+      <PageHeader
+        eyebrow="Journal"
+        title={<>Stories from <em className="text-clay-600">the workshop.</em></>}
+        description="News, insights and stories from the heart of Ghana's craft industry."
+      />
 
-      {/* Category Tabs */}
-      <div className="sticky top-0 z-30 bg-white border-b border-sand-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex gap-2 flex-wrap">
+      {/* Category tabs */}
+      <div className="container-page">
+        <div className="flex gap-6 overflow-x-auto no-scrollbar border-b border-stone-200">
           {categories.map(cat => (
             <button
               key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              onClick={() => { setActiveCategory(cat); setPage(1) }}
+              className={`shrink-0 -mb-px pb-3 text-sm border-b-2 transition-colors ${
                 activeCategory === cat
-                  ? 'bg-forest-700 text-white'
-                  : 'bg-sand-100 text-sand-600 hover:bg-sand-200'
+                  ? 'border-stone-900 text-stone-900 font-medium'
+                  : 'border-transparent text-stone-500 hover:text-stone-900'
               }`}
             >
               {cat}
@@ -140,81 +150,82 @@ export default function Blog() {
         </div>
       </div>
 
-      <section className="py-16 kente-weave-bg min-h-[60vh]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-12 md:py-16 min-h-[60vh]">
+        <div className="container-page">
           {loading ? (
-            <div className="space-y-6">
-              <div className="card animate-pulse h-96" />
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map(i => <div key={i} className="card animate-pulse h-64" />)}
+            <div className="animate-pulse grid md:grid-cols-2 gap-10">
+              <div className="aspect-[4/3] rounded-2xl bg-stone-200/70" />
+              <div className="space-y-4 py-6">
+                <div className="h-3 w-1/3 rounded-full bg-stone-200/70" />
+                <div className="h-8 w-full rounded-full bg-stone-200/70" />
+                <div className="h-8 w-2/3 rounded-full bg-stone-200/70" />
               </div>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-earth-500 text-lg">No posts yet. Check back soon!</p>
+            <div className="text-center py-24">
+              <p className="font-display text-4xl text-stone-900 mb-3">No stories yet.</p>
+              <p className="text-stone-500">Check back soon.</p>
             </div>
           ) : (
             <>
-              {/* Featured post */}
-              {featured && (
-                <Link to={`/blog/${featured.slug}`} className="card group flex flex-col md:flex-row mb-10 overflow-hidden">
-                  <div className="md:w-1/2 aspect-video md:aspect-auto overflow-hidden">
+              {/* Featured */}
+              {featured && page === 1 && (
+                <Link to={`/blog/${featured.slug}`} className="group grid md:grid-cols-2 gap-8 md:gap-14 items-center mb-20">
+                  <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-stone-200">
                     <img
                       src={featured.image_url}
                       alt={featured.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }}
+                      onError={onImgError}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
-                  <div className="md:w-1/2 p-8 flex flex-col justify-center">
-                    <span className="badge mb-3">{featured.category}</span>
-                    <h2 className="font-display text-2xl font-bold text-earth-900 mb-3 group-hover:text-brand-600 transition-colors">
-                      {featured.title}
-                    </h2>
-                    <p className="text-earth-500 leading-relaxed mb-6">{featured.excerpt}</p>
-                    <div className="flex items-center gap-4 text-earth-400 text-sm">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={14} /> {formatDate(featured.published_at)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} /> {featured.read_time} min read
-                      </span>
-                    </div>
+                  <div>
+                    <span className="chip mb-6">Featured</span>
+                    <h2 className="text-4xl md:text-5xl leading-[1.05] text-stone-900 mb-5">{featured.title}</h2>
+                    <p className="text-stone-500 leading-relaxed mb-6 line-clamp-3">{featured.excerpt}</p>
+                    <Meta post={featured} />
+                    <span className="link-arrow mt-8">
+                      Read story <ArrowRight size={15} />
+                    </span>
                   </div>
                 </Link>
               )}
 
-              {/* Rest */}
               {rest.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {rest.map(post => (
-                    <Link key={post.id} to={`/blog/${post.slug}`} className="card group">
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={post.image_url}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_IMG }}
-                        />
-                      </div>
-                      <div className="p-6">
-                        <span className="badge mb-3">{post.category}</span>
-                        <h3 className="font-display font-bold text-lg text-earth-900 mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
+                <>
+                  <h2 id="latest" className="scroll-mt-28 font-sans text-sm font-medium tracking-normal text-stone-900 pb-4 mb-10 border-b border-stone-200">
+                    Latest stories
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
+                    {paginated.map(post => (
+                      <Link key={post.id} to={`/blog/${post.slug}`} className="group">
+                        <div className="aspect-[3/2] rounded-2xl overflow-hidden bg-stone-200 mb-5">
+                          <img
+                            src={post.image_url}
+                            alt={post.title}
+                            loading="lazy"
+                            onError={onImgError}
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                          />
+                        </div>
+                        <Meta post={post} />
+                        <h3 className="mt-3 text-2xl leading-tight text-stone-900 line-clamp-2 group-hover:text-clay-700 transition-colors">
                           {post.title}
                         </h3>
-                        <p className="text-earth-500 text-sm leading-relaxed mb-4 line-clamp-2">{post.excerpt}</p>
-                        <div className="flex items-center justify-between text-earth-400 text-xs">
-                          <span className="flex items-center gap-1">
-                            <Calendar size={12} /> {formatDate(post.published_at)}
-                          </span>
-                          <span className="flex items-center gap-1 text-brand-600 font-medium">
-                            Read more <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                        <p className="mt-3 text-sm text-stone-500 leading-relaxed line-clamp-2">{post.excerpt}</p>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onChange={changePage}
+                    totalItems={rest.length}
+                    pageSize={PAGE_SIZE}
+                    className="mt-16 pt-8 border-t border-stone-200"
+                  />
+                </>
               )}
             </>
           )}

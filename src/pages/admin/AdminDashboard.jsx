@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Package, BookOpen, MessageSquare, TrendingUp, ArrowRight } from 'lucide-react'
+import { Package, BookOpen, MessageSquare, Inbox, ArrowUpRight, Plus } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../context/AuthContext'
+import AdminHeader from '../../components/ui/AdminHeader'
+
+function greeting() {
+  const h = new Date().getHours()
+  return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
+}
 
 export default function AdminDashboard() {
+  const { user } = useAuth()
   const [stats, setStats] = useState({ products: 0, posts: 0, messages: 0, unread: 0 })
   const [recentMessages, setRecentMessages] = useState([])
   const [loading, setLoading] = useState(true)
@@ -30,68 +38,76 @@ export default function AdminDashboard() {
   }, [])
 
   const cards = [
-    { label: 'Products', value: stats.products, icon: Package, to: '/admin/products', color: 'bg-brand-500' },
-    { label: 'Blog Posts', value: stats.posts, icon: BookOpen, to: '/admin/blog', color: 'bg-earth-600' },
-    { label: 'Total Messages', value: stats.messages, icon: MessageSquare, to: '/admin/messages', color: 'bg-green-600' },
-    { label: 'Unread Messages', value: stats.unread, icon: TrendingUp, to: '/admin/messages', color: 'bg-amber-500' },
+    { label: 'Products', value: stats.products, icon: Package, to: '/admin/products' },
+    { label: 'Blog posts', value: stats.posts, icon: BookOpen, to: '/admin/blog' },
+    { label: 'Messages', value: stats.messages, icon: MessageSquare, to: '/admin/messages' },
+    { label: 'Unread', value: stats.unread, icon: Inbox, to: '/admin/messages', accent: true },
   ]
+
+  const name = user?.email?.split('@')[0]
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold text-earth-900">Dashboard</h1>
-        <p className="text-earth-500 text-sm mt-1">Welcome to the Geolicrafts admin panel.</p>
-      </div>
+      <AdminHeader title={`${greeting()}${name ? `, ${name}` : ''}.`} description="Here's what's happening at Geolicrafts.">
+        <Link to="/admin/blog" className="btn-secondary btn-sm"><Plus size={14} /> New post</Link>
+        <Link to="/admin/products" className="btn-primary btn-sm"><Plus size={14} /> New product</Link>
+      </AdminHeader>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {cards.map(({ label, value, icon: Icon, to, color }) => (
-          <Link key={label} to={to} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow border border-earth-100">
-            <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 ${color} rounded-lg flex items-center justify-center`}>
-                <Icon size={18} className="text-white" />
-              </div>
-              <ArrowRight size={16} className="text-earth-300" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        {cards.map(({ label, value, icon: Icon, to, accent }) => (
+          <Link key={label} to={to} className="group card p-5 hover:ring-stone-300 transition-shadow">
+            <div className="flex items-center justify-between mb-6">
+              <span className={`grid place-items-center h-9 w-9 rounded-full ${accent && value > 0 ? 'bg-clay-50 text-clay-600' : 'bg-stone-100 text-stone-600'}`}>
+                <Icon size={16} />
+              </span>
+              <ArrowUpRight size={16} className="text-stone-300 group-hover:text-stone-900 transition-colors" />
             </div>
-            <div className="font-display text-3xl font-bold text-earth-900">
-              {loading ? <div className="h-8 w-16 bg-earth-100 animate-pulse rounded" /> : value}
-            </div>
-            <p className="text-earth-500 text-sm mt-1">{label}</p>
+            {loading
+              ? <div className="h-9 w-14 bg-stone-100 animate-pulse rounded-lg" />
+              : <p className="font-display text-5xl leading-none text-stone-900 tabular-nums">{value}</p>}
+            <p className="text-sm text-stone-500 mt-2">{label}</p>
           </Link>
         ))}
       </div>
 
-      {/* Recent Messages */}
-      <div className="bg-white rounded-xl shadow-sm border border-earth-100 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-earth-100">
-          <h2 className="font-display font-semibold text-earth-900">Recent Messages</h2>
-          <Link to="/admin/messages" className="text-brand-600 text-sm hover:underline">View all</Link>
+      {/* Recent messages */}
+      <div className="card overflow-hidden">
+        <div className="flex items-center justify-between px-5 sm:px-6 h-14 border-b border-stone-100">
+          <h2 className="font-sans text-sm font-semibold tracking-normal text-stone-900">Recent messages</h2>
+          <Link to="/admin/messages" className="btn-ghost btn-sm -mr-3">View all</Link>
         </div>
         {loading ? (
           <div className="p-6 space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-12 bg-earth-50 animate-pulse rounded-lg" />
-            ))}
+            {[1, 2, 3].map(i => <div key={i} className="h-12 bg-stone-50 animate-pulse rounded-xl" />)}
           </div>
         ) : recentMessages.length === 0 ? (
-          <div className="p-8 text-center text-earth-400 text-sm">No messages yet.</div>
-        ) : (
-          <div className="divide-y divide-earth-50">
-            {recentMessages.map(msg => (
-              <div key={msg.id} className="px-6 py-4 flex items-start gap-4">
-                <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${msg.read ? 'bg-earth-200' : 'bg-brand-500'}`} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-earth-900 text-sm">{msg.name}</span>
-                    <span className="text-earth-400 text-xs shrink-0">
-                      {new Date(msg.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <p className="text-earth-500 text-xs mt-0.5">{msg.subject}</p>
-                </div>
-              </div>
-            ))}
+          <div className="py-16 text-center">
+            <Inbox size={28} className="mx-auto text-stone-300 mb-3" />
+            <p className="text-sm text-stone-500">No messages yet.</p>
           </div>
+        ) : (
+          <ul className="divide-y divide-stone-100">
+            {recentMessages.map(msg => (
+              <li key={msg.id}>
+                <Link to="/admin/messages" className="flex items-center gap-4 px-5 sm:px-6 py-4 hover:bg-stone-50 transition-colors">
+                  <span className="grid place-items-center h-9 w-9 shrink-0 rounded-full bg-stone-100 text-stone-600 text-xs font-semibold uppercase">
+                    {msg.name?.[0] || '?'}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm truncate ${msg.read ? 'text-stone-700' : 'font-semibold text-stone-900'}`}>{msg.name}</span>
+                      {!msg.read && <span className="h-1.5 w-1.5 rounded-full bg-clay-500 shrink-0" />}
+                    </div>
+                    <p className="text-xs text-stone-500 truncate mt-0.5">{msg.subject} — {msg.message}</p>
+                  </div>
+                  <span className="text-xs text-stone-400 shrink-0 tabular-nums">
+                    {new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

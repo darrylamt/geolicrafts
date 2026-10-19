@@ -1,8 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, Link } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Layout from './components/layout/Layout'
 import AdminLayout from './components/layout/AdminLayout'
+import ScrollToTop from './components/ui/ScrollToTop'
 
 // Public pages
 import Home from './pages/Home'
@@ -24,14 +25,20 @@ function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) {
     return (
-      <div className="min-h-screen bg-earth-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-stone-900 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
   if (!user) return <Navigate to="/admin/login" replace />
   return children
 }
+
+const admin = page => (
+  <ProtectedRoute>
+    <AdminLayout>{page}</AdminLayout>
+  </ProtectedRoute>
+)
 
 function AppRoutes() {
   return (
@@ -46,31 +53,11 @@ function AppRoutes() {
 
       {/* Admin */}
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={
-        <ProtectedRoute>
-          <AdminLayout><AdminDashboard /></AdminLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/products" element={
-        <ProtectedRoute>
-          <AdminLayout><AdminProducts /></AdminLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/blog" element={
-        <ProtectedRoute>
-          <AdminLayout><AdminBlog /></AdminLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/messages" element={
-        <ProtectedRoute>
-          <AdminLayout><AdminMessages /></AdminLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/import" element={
-        <ProtectedRoute>
-          <AdminLayout><AdminImport /></AdminLayout>
-        </ProtectedRoute>
-      } />
+      <Route path="/admin" element={admin(<AdminDashboard />)} />
+      <Route path="/admin/products" element={admin(<AdminProducts />)} />
+      <Route path="/admin/blog" element={admin(<AdminBlog />)} />
+      <Route path="/admin/messages" element={admin(<AdminMessages />)} />
+      <Route path="/admin/import" element={admin(<AdminImport />)} />
 
       {/* Fallback */}
       <Route path="*" element={<Layout><NotFound /></Layout>} />
@@ -80,10 +67,13 @@ function AppRoutes() {
 
 function NotFound() {
   return (
-    <div className="pt-32 pb-16 text-center min-h-screen flex flex-col items-center justify-center">
-      <h1 className="font-display text-6xl font-bold text-earth-200 mb-4">404</h1>
-      <p className="text-earth-600 text-xl mb-8">Page not found</p>
-      <a href="/" className="btn-primary">Go Home</a>
+    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-5 pt-24">
+      <p className="eyebrow mb-4">Error 404</p>
+      <h1 className="text-6xl md:text-8xl text-stone-900 mb-4">Lost the thread.</h1>
+      <p className="text-stone-500 text-lg mb-10 max-w-md">
+        The page you're looking for has moved or never existed.
+      </p>
+      <Link to="/" className="btn-primary">Back to home</Link>
     </div>
   )
 }
@@ -91,12 +81,19 @@ function NotFound() {
 export default function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <AppRoutes />
       <Toaster
-        position="top-right"
+        position="bottom-center"
         toastOptions={{
-          style: { borderRadius: '10px', fontSize: '14px' },
-          success: { iconTheme: { primary: '#b86915', secondary: '#fff' } },
+          style: {
+            borderRadius: '999px',
+            fontSize: '14px',
+            background: '#1c1917',
+            color: '#fafaf9',
+            padding: '10px 18px',
+          },
+          success: { iconTheme: { primary: '#cd7d58', secondary: '#1c1917' } },
         }}
       />
     </AuthProvider>

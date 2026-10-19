@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Download, Upload, Globe, CheckCircle, AlertCircle, Loader, X, RefreshCw } from 'lucide-react'
+import { Download, Upload, Globe, CheckCircle, AlertCircle, Loader, RefreshCw, FileText } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
+import AdminHeader from '../../components/ui/AdminHeader'
 
 const CATEGORIES = ['Musical Instruments', 'Baskets & Weaving', 'Wood Carvings', 'Textiles & Fashion', 'Gifts & Souvenirs']
 const WP_URL = 'https://geolicrafts.com'
@@ -115,9 +116,9 @@ function WordPressImporter() {
   if (step === 'done') {
     return (
       <div className="text-center py-12">
-        <CheckCircle size={52} className="mx-auto text-green-500 mb-4" />
-        <h3 className="font-display text-xl font-bold text-sand-900 mb-2">Import Complete!</h3>
-        <p className="text-sand-500 mb-6">{progress.total} products imported from WordPress.</p>
+        <CheckCircle size={52} className="mx-auto text-emerald-600 mb-4" />
+        <h3 className="font-display text-xl font-bold text-stone-900 mb-2">Import Complete!</h3>
+        <p className="text-stone-500 mb-6">{progress.total} products imported from WordPress.</p>
         <button onClick={() => { setStep('idle'); setItems([]); setSelected(new Set()) }} className="btn-primary">
           <RefreshCw size={16} /> Import More
         </button>
@@ -129,12 +130,12 @@ function WordPressImporter() {
     const pct = Math.round((progress.done / progress.total) * 100)
     return (
       <div className="text-center py-12">
-        <Loader size={40} className="mx-auto text-kente-500 mb-4 animate-spin" />
-        <p className="text-sand-700 font-medium mb-4">Importing {progress.done} of {progress.total}...</p>
-        <div className="w-full bg-sand-100 rounded-full h-3 max-w-sm mx-auto">
-          <div className="bg-forest-600 h-3 rounded-full transition-all" style={{ width: `${pct}%` }} />
+        <Loader size={40} className="mx-auto text-clay-500 mb-4 animate-spin" />
+        <p className="text-stone-700 font-medium mb-4">Importing {progress.done} of {progress.total}...</p>
+        <div className="w-full bg-stone-100 rounded-full h-3 max-w-sm mx-auto">
+          <div className="bg-stone-900 h-3 rounded-full transition-all" style={{ width: `${pct}%` }} />
         </div>
-        <p className="text-sand-400 text-sm mt-2">{pct}%</p>
+        <p className="text-stone-400 text-sm mt-2">{pct}%</p>
       </div>
     )
   }
@@ -142,9 +143,9 @@ function WordPressImporter() {
   if (step === 'fetching') {
     return (
       <div className="text-center py-12">
-        <Loader size={40} className="mx-auto text-kente-500 mb-4 animate-spin" />
-        <p className="text-sand-600">Fetching images from geolicrafts.com...</p>
-        <p className="text-sand-400 text-sm mt-2">This may take a moment for large libraries.</p>
+        <Loader size={40} className="mx-auto text-clay-500 mb-4 animate-spin" />
+        <p className="text-stone-600">Fetching images from geolicrafts.com...</p>
+        <p className="text-stone-400 text-sm mt-2">This may take a moment for large libraries.</p>
       </div>
     )
   }
@@ -154,46 +155,46 @@ function WordPressImporter() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="font-semibold text-sand-900">{items.length} images found</p>
-            <p className="text-sand-500 text-sm">{selected.size} selected for import</p>
+            <p className="font-semibold text-stone-900">{items.length} images found</p>
+            <p className="text-stone-500 text-sm">{selected.size} selected for import</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={toggleAll} className="text-sm text-forest-700 hover:underline">
+            <button onClick={toggleAll} className="text-sm text-clay-700 hover:underline">
               {selected.size === items.length ? 'Deselect all' : 'Select all'}
             </button>
             <button
               onClick={importSelected}
               disabled={selected.size === 0}
-              className="btn-primary text-sm py-2"
+              className="btn-primary btn-sm"
             >
               <Upload size={15} /> Import {selected.size} products
             </button>
           </div>
         </div>
 
-        <p className="text-xs text-sand-400 mb-3">
+        <p className="text-xs text-stone-400 mb-3">
           Categories have been auto-detected from image names. You can adjust them before importing.
         </p>
 
-        <div className="border border-sand-200 rounded-xl overflow-hidden max-h-[55vh] overflow-y-auto">
+        <div className="border border-stone-200 rounded-xl overflow-hidden max-h-[55vh] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-sand-50 sticky top-0">
+            <thead className="bg-stone-50 sticky top-0">
               <tr>
                 <th className="px-3 py-2 w-8" />
-                <th className="px-3 py-2 text-left font-medium text-sand-600 w-16">Image</th>
-                <th className="px-3 py-2 text-left font-medium text-sand-600">Name</th>
-                <th className="px-3 py-2 text-left font-medium text-sand-600 w-44">Category</th>
+                <th className="px-3 py-2 text-left font-medium text-stone-600 w-16">Image</th>
+                <th className="px-3 py-2 text-left font-medium text-stone-600">Name</th>
+                <th className="px-3 py-2 text-left font-medium text-stone-600 w-44">Category</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-sand-100">
+            <tbody className="divide-y divide-stone-100">
               {items.map(item => (
-                <tr key={item.wp_id} className={`hover:bg-sand-50 ${!selected.has(item.wp_id) ? 'opacity-40' : ''}`}>
+                <tr key={item.wp_id} className={`hover:bg-stone-50 ${!selected.has(item.wp_id) ? 'opacity-40' : ''}`}>
                   <td className="px-3 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selected.has(item.wp_id)}
                       onChange={() => toggleOne(item.wp_id)}
-                      className="accent-forest-700"
+                      className="accent-stone-900"
                     />
                   </td>
                   <td className="px-3 py-2">
@@ -205,14 +206,14 @@ function WordPressImporter() {
                       type="text"
                       value={item.name}
                       onChange={e => updateName(item.wp_id, e.target.value)}
-                      className="w-full bg-transparent border-b border-transparent hover:border-sand-300 focus:border-kente-400 focus:outline-none py-0.5 text-sand-900 text-sm"
+                      className="w-full bg-transparent border-b border-transparent hover:border-stone-300 focus:border-stone-900 focus:outline-none py-0.5 text-stone-900 text-sm"
                     />
                   </td>
                   <td className="px-3 py-2">
                     <select
                       value={item.category}
                       onChange={e => updateCategory(item.wp_id, e.target.value)}
-                      className="w-full text-xs bg-sand-100 border-0 rounded-lg px-2 py-1.5 text-sand-700 focus:outline-none focus:ring-1 focus:ring-kente-400"
+                      className="w-full text-xs bg-stone-100 border-0 rounded-lg px-2 py-1.5 text-stone-700 focus:outline-none focus:ring-1 focus:ring-stone-900"
                     >
                       {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                     </select>
@@ -229,12 +230,12 @@ function WordPressImporter() {
   // idle
   return (
     <div className="space-y-4">
-      <p className="text-sand-600 text-sm leading-relaxed">
+      <p className="text-stone-600 text-sm leading-relaxed">
         This will fetch all images from the <strong>geolicrafts.com</strong> WordPress media library
         and import them as products. Categories are auto-detected from image names — you can adjust them before confirming.
       </p>
       {error && (
-        <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+        <div className="flex items-start gap-3 bg-red-50 rounded-xl p-4 text-sm text-red-700">
           <AlertCircle size={16} className="shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
@@ -301,9 +302,9 @@ function CsvImporter() {
   if (done) {
     return (
       <div className="text-center py-10">
-        <CheckCircle size={48} className="mx-auto text-green-500 mb-3" />
-        <p className="font-semibold text-sand-900">Import complete!</p>
-        <button onClick={() => { setRows([]); setDone(false) }} className="btn-primary mt-4 text-sm">Import another file</button>
+        <CheckCircle size={48} className="mx-auto text-emerald-600 mb-3" />
+        <p className="font-semibold text-stone-900">Import complete!</p>
+        <button onClick={() => { setRows([]); setDone(false) }} className="btn-primary btn-sm mt-4">Import another file</button>
       </div>
     )
   }
@@ -311,16 +312,16 @@ function CsvImporter() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sand-600 text-sm mb-3">
-          Upload a <strong>.csv</strong> file with columns: <code className="bg-sand-100 px-1.5 py-0.5 rounded text-xs">name, description, image_url, category</code>
+        <p className="text-stone-600 text-sm mb-3">
+          Upload a <strong>.csv</strong> file with columns: <code className="bg-stone-100 px-1.5 py-0.5 rounded text-xs">name, description, image_url, category</code>
         </p>
-        <div className="border-2 border-dashed border-sand-200 rounded-xl p-6 text-center hover:border-kente-400 transition-colors">
-          <Upload size={28} className="mx-auto text-sand-300 mb-2" />
+        <div className="border-2 border-dashed border-stone-200 rounded-2xl p-8 text-center hover:border-stone-400 transition-colors">
+          <Upload size={28} className="mx-auto text-stone-300 mb-2" />
           <label className="cursor-pointer">
-            <span className="text-forest-700 font-medium text-sm">Choose CSV file</span>
+            <span className="text-clay-700 font-medium text-sm">Choose CSV file</span>
             <input type="file" accept=".csv" onChange={handleFile} className="hidden" />
           </label>
-          <p className="text-sand-400 text-xs mt-1">or drag and drop</p>
+          <p className="text-stone-400 text-xs mt-1">or drag and drop</p>
         </div>
       </div>
 
@@ -329,27 +330,27 @@ function CsvImporter() {
       {rows.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sand-700 font-medium text-sm">{rows.length} rows ready</p>
-            <button onClick={importRows} disabled={importing} className="btn-primary text-sm py-2">
+            <p className="text-stone-700 font-medium text-sm">{rows.length} rows ready</p>
+            <button onClick={importRows} disabled={importing} className="btn-primary btn-sm">
               {importing ? <Loader size={14} className="animate-spin" /> : <Upload size={14} />}
               {importing ? 'Importing...' : `Import ${rows.length} products`}
             </button>
           </div>
-          <div className="border border-sand-200 rounded-xl overflow-hidden max-h-64 overflow-y-auto">
+          <div className="border border-stone-200 rounded-xl overflow-hidden max-h-64 overflow-y-auto">
             <table className="w-full text-xs">
-              <thead className="bg-sand-50 sticky top-0">
+              <thead className="bg-stone-50 sticky top-0">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-sand-500">Name</th>
-                  <th className="px-3 py-2 text-left font-medium text-sand-500">Category</th>
-                  <th className="px-3 py-2 text-left font-medium text-sand-500">Image</th>
+                  <th className="px-3 py-2 text-left font-medium text-stone-500">Name</th>
+                  <th className="px-3 py-2 text-left font-medium text-stone-500">Category</th>
+                  <th className="px-3 py-2 text-left font-medium text-stone-500">Image</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-sand-50">
+              <tbody className="divide-y divide-stone-100">
                 {rows.map(r => (
                   <tr key={r.id}>
-                    <td className="px-3 py-2 text-sand-900">{r.name}</td>
-                    <td className="px-3 py-2"><span className="badge text-[10px]">{r.category}</span></td>
-                    <td className="px-3 py-2 text-sand-400 truncate max-w-[140px]">{r.image_url || '—'}</td>
+                    <td className="px-3 py-2 text-stone-900">{r.name}</td>
+                    <td className="px-3 py-2"><span className="chip">{r.category}</span></td>
+                    <td className="px-3 py-2 text-stone-400 truncate max-w-[140px]">{r.image_url || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -359,9 +360,9 @@ function CsvImporter() {
       )}
 
       {/* Template download */}
-      <div className="bg-sand-50 rounded-xl p-4">
-        <p className="text-sand-600 text-xs font-medium mb-2">CSV Template format:</p>
-        <code className="text-xs text-sand-500 block">
+      <div className="bg-stone-50 rounded-xl p-4">
+        <p className="text-stone-600 text-xs font-medium mb-2">CSV Template format:</p>
+        <code className="text-xs text-stone-500 block">
           name,description,image_url,category<br />
           Djembe Drum,Hand-carved drum,https://...,Musical Instruments
         </code>
@@ -370,7 +371,7 @@ function CsvImporter() {
             const csv = 'name,description,image_url,category\nDjembe Drum,Hand-carved djembe drum,https://geolicrafts.com/wp-content/uploads/2023/05/example.jpg,Musical Instruments\n'
             const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv])); a.download = 'products-template.csv'; a.click()
           }}
-          className="mt-3 flex items-center gap-1.5 text-forest-700 text-xs font-medium hover:underline"
+          className="mt-3 flex items-center gap-1.5 text-clay-700 text-xs font-medium hover:underline"
         >
           <Download size={13} /> Download template
         </button>
@@ -385,41 +386,36 @@ export default function AdminImport() {
 
   return (
     <div className="max-w-4xl">
-      <div className="mb-6">
-        <h1 className="font-display text-2xl font-bold text-sand-900">Bulk Import</h1>
-        <p className="text-sand-500 text-sm mt-1">Import hundreds of products at once from WordPress or a spreadsheet.</p>
-      </div>
+      <AdminHeader title="Bulk import" description="Import hundreds of products at once from WordPress or a spreadsheet." />
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="inline-flex p-1 rounded-full bg-stone-100 mb-6">
         {[
-          { key: 'wordpress', label: '🌐 Import from WordPress' },
-          { key: 'csv', label: '📄 Import from CSV' },
-        ].map(t => (
+          { key: 'wordpress', label: 'From WordPress', icon: Globe },
+          { key: 'csv', label: 'From CSV', icon: FileText },
+        ].map(({ key, label, icon: Icon }) => (
           <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              tab === t.key
-                ? 'bg-[#3B1F0A] text-[#F5A200]'
-                : 'bg-sand-100 text-sand-600 hover:bg-sand-200'
+            key={key}
+            onClick={() => setTab(key)}
+            className={`h-9 px-4 rounded-full text-sm inline-flex items-center gap-2 transition-all ${
+              tab === key ? 'bg-white text-stone-900 font-medium shadow-sm' : 'text-stone-500 hover:text-stone-900'
             }`}
           >
-            {t.label}
+            <Icon size={15} /> {label}
           </button>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-sand-100 p-6">
+      <div className="card p-6">
         {tab === 'wordpress' ? <WordPressImporter /> : <CsvImporter />}
       </div>
 
       {/* Node.js script note */}
-      <div className="mt-6 bg-[#1a1a1a] rounded-xl p-5">
+      <div className="mt-6 bg-stone-950 rounded-2xl p-5">
         <p className="text-white/70 text-xs font-mono mb-2 flex items-center gap-2">
-          <span className="text-kente-400">$</span> Alternative: run the Node.js migration script locally
+          <span className="text-clay-300">$</span> Alternative: run the Node.js migration script locally
         </p>
-        <code className="text-kente-300 text-xs font-mono block">
+        <code className="text-clay-200 text-xs font-mono block">
           VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... node scripts/import-from-wordpress.mjs
         </code>
         <p className="text-white/40 text-xs mt-2">

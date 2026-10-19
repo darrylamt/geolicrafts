@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react'
-import { supabase } from '../lib/supabase'
-import { getStorageUrl } from '../lib/supabase'
-import KenteDivider from '../components/ui/KenteDivider'
+import { Link, useSearchParams } from 'react-router-dom'
+import { Search, X, ArrowRight } from 'lucide-react'
+import { supabase, getStorageUrl } from '../lib/supabase'
+import PageHeader from '../components/ui/PageHeader'
+import Pagination from '../components/ui/Pagination'
+import Modal from '../components/ui/Modal'
 
 const PAGE_SIZE = 12
+const FALLBACK_IMG = 'https://geolicrafts.com/wp-content/uploads/2023/05/G-158-no-handle-round-primary.jpg'
 
 const FALLBACK_PRODUCTS = [
   { id: 1, name: 'Djembe Drum', category: 'Musical Instruments', description: 'Hand-carved djembe drum made from authentic Ghanaian wood with goat-skin head.', image_url: 'https://geolicrafts.com/wp-content/uploads/2023/05/afroton-ads02-djembe-standard-30-32-cm_1_DRU0041870-000-690x690.jpg' },
@@ -17,15 +20,21 @@ const FALLBACK_PRODUCTS = [
   { id: 8, name: 'Djembe Carved', category: 'Musical Instruments', description: 'Ornately carved djembe with traditional Akan motifs along the body.', image_url: 'https://geolicrafts.com/wp-content/uploads/2023/05/DRU707a_c4c5f1e2-41a8-4e85-b688-5e56d79a88ef_grande.webp' },
 ]
 
-const ALL_CATEGORIES = ['All', 'Musical Instruments', 'Baskets & Weaving', 'Wood Carvings', 'Textiles & Fashion']
+const ALL_CATEGORIES = ['All', 'Musical Instruments', 'Baskets & Weaving', 'Wood Carvings', 'Textiles & Fashion', 'Gifts & Souvenirs']
+
+const imageFor = p => p.image_url || getStorageUrl('products', p.image_path) || FALLBACK_IMG
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All')
   const [page, setPage] = useState(1)
+  const [active, setActive] = useState(null)
+  const [params, setParams] = useSearchParams()
   const searchRef = useRef()
+  const gridRef = useRef()
+
+  const category = ALL_CATEGORIES.includes(params.get('category')) ? params.get('category') : 'All'
 
   useEffect(() => {
     async function load() {
@@ -39,10 +48,9 @@ export default function Products() {
     load()
   }, [])
 
+  const q = search.trim().toLowerCase()
   const filtered = products.filter(p => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description?.toLowerCase().includes(search.toLowerCase())
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
     return matchesSearch && (category === 'All' || p.category === category)
   })
 
@@ -50,71 +58,65 @@ export default function Products() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const hasActiveFilter = search || category !== 'All'
 
-  const handleFilterChange = (newSearch, newCategory) => {
-    if (newSearch !== undefined) setSearch(newSearch)
-    if (newCategory !== undefined) setCategory(newCategory)
+  const setCategory = cat => {
     setPage(1)
+    setParams(cat === 'All' ? {} : { category: cat }, { replace: true })
+  }
+
+  const changePage = p => {
+    setPage(p)
+    const top = gridRef.current?.getBoundingClientRect().top + window.scrollY - 160
+    window.scrollTo({ top, behavior: 'smooth' })
+  }
+
+  const clearAll = () => {
+    setSearch('')
+    setCategory('All')
   }
 
   return (
     <>
-      {/* ─── Header ─── */}
-      <section className="pt-24 pb-0 mudcloth-bg relative overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 pb-16">
-          <div className="flex items-center justify-center gap-2 mb-5">
-            <span className="w-4 h-1 rounded-full bg-accra-500 inline-block" />
-            <span className="w-4 h-1 rounded-full bg-kente-400 inline-block" />
-            <span className="w-4 h-1 rounded-full bg-forest-500 inline-block" />
-          </div>
-          <span className="inline-block bg-kente-400/20 text-kente-300 border border-kente-400/30 text-sm font-semibold px-4 py-1 rounded-full mb-4">
-            Handcrafted in Ghana
-          </span>
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            Our Collections
-          </h1>
-          <p className="text-forest-200 text-base max-w-xl mx-auto">
-            Authentic African arts, musical instruments, and handcrafted gifts — each piece made with skill and cultural pride.
-          </p>
-        </div>
-        <KenteDivider height={10} />
-      </section>
+      <PageHeader
+        eyebrow="Collections"
+        title={<>Objects made <em className="text-clay-600">by hand.</em></>}
+        description="Drums, baskets, carvings and textiles — each piece made in Dodowa with skill and cultural pride."
+      />
 
-      {/* ─── Sticky Filter Bar ─── */}
-      <div className="sticky top-0 z-30 bg-[#F5F0E8] border-b border-[#3B1F0A]/10 shadow-sm">
-        {/* Search row */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-2">
-          <div className="relative">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-sand-400 pointer-events-none" />
+      {/* ─── Filter bar ─── */}
+      <div className="sticky top-16 md:top-[72px] z-30 bg-stone-50/85 backdrop-blur-xl border-y border-stone-200/70">
+        <div className="container-page py-3 flex flex-col md:flex-row md:items-center gap-3">
+          <div className="relative md:w-72 shrink-0">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
             <input
               ref={searchRef}
               type="text"
-              placeholder="Search products..."
+              placeholder="Search the collection"
               value={search}
-              onChange={e => handleFilterChange(e.target.value, undefined)}
-              className="w-full bg-white border border-[#3B1F0A]/15 rounded-lg pl-9 pr-9 py-2.5 text-sm text-sand-900 placeholder-sand-400 focus:outline-none focus:ring-2 focus:ring-kente-400/50 focus:border-kente-400 transition-all"
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
+              className="input h-10 rounded-full pl-10 pr-10"
+              aria-label="Search products"
             />
             {search && (
               <button
-                onClick={() => { handleFilterChange('', undefined); searchRef.current?.focus() }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-sand-400 hover:text-sand-700"
+                onClick={() => { setSearch(''); searchRef.current?.focus() }}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 icon-btn h-7 w-7"
+                aria-label="Clear search"
               >
                 <X size={14} />
               </button>
             )}
           </div>
-        </div>
 
-        {/* Category scroll row — single line, scrollable, no wrapping */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-5 px-5 md:mx-0 md:px-0">
             {ALL_CATEGORIES.map(cat => (
               <button
                 key={cat}
-                onClick={() => handleFilterChange(undefined, cat)}
-                className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-200 ${
+                onClick={() => setCategory(cat)}
+                aria-pressed={category === cat}
+                className={`shrink-0 h-10 px-4 rounded-full text-sm transition-colors ${
                   category === cat
-                    ? 'bg-[#3B1F0A] text-[#F5A200]'
-                    : 'bg-white border border-[#3B1F0A]/15 text-[#3B1F0A]/60 hover:border-[#3B1F0A]/40 hover:text-[#3B1F0A]'
+                    ? 'bg-stone-900 text-white'
+                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-900/5'
                 }`}
               >
                 {cat}
@@ -124,140 +126,123 @@ export default function Products() {
         </div>
       </div>
 
-      {/* ─── Products Grid ─── */}
-      <section className="py-8 md:py-12 bg-[#F5F0E8] min-h-[60vh]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      {/* ─── Grid ─── */}
+      <section ref={gridRef} className="py-10 md:py-14 min-h-[60vh]">
+        <div className="container-page">
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-xl overflow-hidden animate-pulse shadow-sm">
-                  <div className="aspect-square bg-sand-200" />
-                  <div className="p-3 space-y-2">
-                    <div className="h-3 bg-sand-200 rounded w-1/2" />
-                    <div className="h-4 bg-sand-100 rounded w-3/4" />
-                  </div>
+                <div key={i} className="animate-pulse">
+                  <div className="aspect-[4/5] rounded-2xl bg-stone-200/70" />
+                  <div className="mt-4 h-3 w-1/3 rounded-full bg-stone-200/70" />
+                  <div className="mt-2 h-4 w-2/3 rounded-full bg-stone-200/70" />
                 </div>
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <SlidersHorizontal size={40} className="mx-auto text-sand-300 mb-4" />
-              <p className="text-sand-500 font-medium mb-1">No products found</p>
-              <p className="text-sand-400 text-sm mb-6">Try a different search or category</p>
-              <button
-                onClick={() => { handleFilterChange('', 'All') }}
-                className="px-5 py-2 bg-[#3B1F0A] text-white text-sm font-medium rounded-lg hover:bg-[#3B1F0A]/80 transition-colors"
-              >
-                Clear filters
-              </button>
+            <div className="text-center py-24">
+              <p className="font-display text-4xl text-stone-900 mb-3">Nothing found.</p>
+              <p className="text-stone-500 mb-8">Try a different search or category.</p>
+              <button onClick={clearAll} className="btn-secondary">Clear filters</button>
             </div>
           ) : (
             <>
-              {/* Count + active filter indicator */}
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sand-500 text-xs">
-                  {filtered.length} {filtered.length === 1 ? 'item' : 'items'}
-                  {category !== 'All' && <span className="ml-1">in <span className="text-[#3B1F0A] font-medium">{category}</span></span>}
+              <div className="flex items-center justify-between mb-8">
+                <p className="text-sm text-stone-500 tabular-nums">
+                  {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'}
+                  {category !== 'All' && <> in <span className="text-stone-900">{category}</span></>}
                 </p>
                 {hasActiveFilter && (
-                  <button
-                    onClick={() => handleFilterChange('', 'All')}
-                    className="text-xs text-[#C1440E] hover:underline flex items-center gap-1"
-                  >
-                    <X size={11} /> Clear all
+                  <button onClick={clearAll} className="btn-ghost btn-sm -mr-3">
+                    <X size={14} /> Clear
                   </button>
                 )}
               </div>
 
-              {/* 2-col mobile · 3-col tablet · 4-col desktop */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-12">
                 {paginated.map(product => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.id} product={product} onOpen={() => setActive(product)} />
                 ))}
               </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#3B1F0A]/10">
-                  <button
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="flex items-center gap-1.5 text-sm text-[#3B1F0A]/60 hover:text-[#3B1F0A] disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-lg border border-[#3B1F0A]/15 bg-white hover:bg-[#3B1F0A]/5 transition-colors"
-                  >
-                    <ChevronLeft size={15} /> Previous
-                  </button>
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-                      .reduce((acc, p, idx, arr) => {
-                        if (idx > 0 && p - arr[idx - 1] > 1) acc.push('...')
-                        acc.push(p)
-                        return acc
-                      }, [])
-                      .map((p, i) => (
-                        <button
-                          key={i}
-                          onClick={() => typeof p === 'number' && setPage(p)}
-                          className={`w-9 h-9 text-sm rounded-lg font-medium transition-colors ${
-                            p === page
-                              ? 'bg-[#3B1F0A] text-[#F5A200]'
-                              : typeof p === 'number'
-                              ? 'bg-white border border-[#3B1F0A]/15 text-[#3B1F0A]/60 hover:bg-[#3B1F0A]/5'
-                              : 'text-[#3B1F0A]/30 cursor-default'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      ))
-                    }
-                  </div>
-                  <button
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="flex items-center gap-1.5 text-sm text-[#3B1F0A]/60 hover:text-[#3B1F0A] disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-lg border border-[#3B1F0A]/15 bg-white hover:bg-[#3B1F0A]/5 transition-colors"
-                  >
-                    Next <ChevronRight size={15} />
-                  </button>
-                </div>
-              )}
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onChange={changePage}
+                totalItems={filtered.length}
+                pageSize={PAGE_SIZE}
+                className="mt-16 pt-8 border-t border-stone-200"
+              />
             </>
           )}
         </div>
       </section>
+
+      <ProductModal product={active} onClose={() => setActive(null)} />
     </>
   )
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, onOpen }) {
   return (
-    <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col">
-      {/* Square image */}
-      <div className="aspect-square overflow-hidden relative bg-sand-100">
+    <button onClick={onOpen} className="group text-left focus-visible:outline-none">
+      <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-stone-100 ring-offset-4 ring-offset-stone-50 group-focus-visible:ring-2 group-focus-visible:ring-clay-500">
         <img
-          src={product.image_url || getStorageUrl('products', product.image_path)}
+          src={imageFor(product)}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={e => { e.target.src = 'https://geolicrafts.com/wp-content/uploads/2023/05/G-158-no-handle-round-primary.jpg' }}
           loading="lazy"
+          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG }}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
         />
-        {/* Category chip over image */}
-        <span className="absolute top-2 left-2 bg-[#3B1F0A]/80 text-[#F5A200] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full backdrop-blur-sm">
-          {product.category.split(' ')[0]}
-        </span>
       </div>
+      <p className="mt-4 text-xs text-stone-500">{product.category}</p>
+      <h3 className="mt-1 font-sans text-[15px] font-medium tracking-normal text-stone-900 leading-snug group-hover:text-clay-700 transition-colors">
+        {product.name}
+      </h3>
+    </button>
+  )
+}
 
-      {/* Info */}
-      <div className="p-3 flex-1 flex flex-col">
-        <h3 className="font-display font-semibold text-sm md:text-base text-[#3B1F0A] leading-snug mb-1">
-          {product.name}
-        </h3>
-        <p className="text-[#3B1F0A]/50 text-xs leading-relaxed line-clamp-2 hidden sm:block">
-          {product.description}
-        </p>
-      </div>
-
-      {/* Kente bottom accent on hover */}
-      <div className="h-0.5 w-0 group-hover:w-full transition-all duration-500 bg-gradient-to-r from-accra-500 via-kente-400 to-forest-600" />
-    </div>
+function ProductModal({ product, onClose }) {
+  return (
+    <Modal open={!!product} onClose={onClose} size="xl">
+      {product && (
+        <div className="grid md:grid-cols-2">
+          <div className="relative aspect-square md:aspect-auto md:min-h-[480px] bg-stone-100 rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl overflow-hidden">
+            <img
+              src={imageFor(product)}
+              alt={product.name}
+              onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+          <div className="p-6 sm:p-10 flex flex-col">
+            <div className="flex justify-between items-start gap-4">
+              <span className="chip">{product.category}</span>
+              <button onClick={onClose} className="icon-btn -mt-1 -mr-2" aria-label="Close">
+                <X size={18} />
+              </button>
+            </div>
+            <h2 className="mt-6 text-4xl md:text-5xl leading-[1] text-stone-900">{product.name}</h2>
+            {product.description && (
+              <p className="mt-5 text-stone-600 leading-relaxed">{product.description}</p>
+            )}
+            <ul className="mt-8 space-y-3 text-sm border-t border-stone-100 pt-6">
+              <li className="flex justify-between"><span className="text-stone-500">Made in</span><span className="text-stone-900">Dodowa, Ghana</span></li>
+              <li className="flex justify-between"><span className="text-stone-500">Availability</span><span className="text-stone-900">Retail & wholesale</span></li>
+              <li className="flex justify-between"><span className="text-stone-500">Shipping</span><span className="text-stone-900">Worldwide</span></li>
+            </ul>
+            <div className="mt-auto pt-10">
+              <Link
+                to={`/contact?product=${encodeURIComponent(product.name)}`}
+                className="btn-primary btn-lg w-full"
+              >
+                Enquire about this piece <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </Modal>
   )
 }

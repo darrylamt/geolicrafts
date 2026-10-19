@@ -1,120 +1,79 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Mail, Phone } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 
 const IconFacebook = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 )
 
 const IconInstagram = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-    <circle cx="12" cy="12" r="4"/>
-    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
   </svg>
 )
-import KenteDivider from '../ui/KenteDivider'
+
+const nav = [
+  { to: '/products', label: 'Collections' },
+  { to: '/about', label: 'About' },
+  { to: '/blog', label: 'Journal' },
+  { to: '/contact', label: 'Contact' },
+]
+
+const social = 'grid place-items-center h-9 w-9 rounded-full ring-1 ring-white/15 text-stone-300 hover:text-white hover:ring-white/40 transition'
 
 export default function Footer() {
   return (
-    <footer className="bg-[#3B1F0A] text-white/70">
-      <KenteDivider height={8} />
-
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link to="/" className="font-display text-3xl font-black text-white tracking-tight block mb-4">
-              Geoli<span className="text-[#F5A200]">crafts</span>
+    <footer className="bg-stone-950 text-stone-400">
+      <div className="container-page pt-20 pb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">
+          <div className="lg:col-span-6">
+            <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05] max-w-md">
+              Handmade in Ghana, <em className="text-clay-300">shipped worldwide.</em>
+            </h2>
+            <Link to="/contact" className="btn-light mt-8">
+              Start an enquiry <ArrowUpRight size={15} />
             </Link>
-            <p className="text-white/55 leading-relaxed max-w-sm text-sm mb-6">
-              Crafting Ghana's future through authentic African arts, traditional handcraft, and community empowerment.
-              Every piece carries the soul of a culture — woven, carved, and drummed into existence.
-            </p>
-            <div className="flex gap-3">
-              <a
-                href="https://www.facebook.com/Geolicrafts"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#C1440E] flex items-center justify-center transition-all duration-200"
-                aria-label="Facebook"
-              >
-                <IconFacebook />
-              </a>
-              <a
-                href="https://www.instagram.com/geolicrafts"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#C1440E] flex items-center justify-center transition-all duration-200"
-                aria-label="Instagram"
-              >
-                <IconInstagram />
-              </a>
-            </div>
           </div>
 
-          {/* Quick links */}
-          <div>
-            <h3 className="text-white font-bold text-[11px] uppercase tracking-widest mb-5">
-              Quick Links
-            </h3>
+          <div className="lg:col-span-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">Explore</p>
             <ul className="space-y-3">
-              {[
-                { to: '/', label: 'Home' },
-                { to: '/products', label: 'Our Collections' },
-                { to: '/blog', label: 'Blog & News' },
-                { to: '/about', label: 'About Us' },
-                { to: '/contact', label: 'Contact' },
-              ].map(({ to, label }) => (
+              {nav.map(({ to, label }) => (
                 <li key={to}>
-                  <Link to={to} className="text-white/50 hover:text-[#F5A200] transition-colors text-sm">
-                    {label}
-                  </Link>
+                  <Link to={to} className="text-sm text-stone-300 hover:text-white transition-colors">{label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="text-white font-bold text-[11px] uppercase tracking-widest mb-5">
-              Contact Us
-            </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3 text-sm text-white/55">
-                <MapPin size={15} className="text-[#F5A200] shrink-0 mt-0.5" />
-                <span>Dodowa, Greater Accra<br />Ghana</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-white/55">
-                <Phone size={15} className="text-[#F5A200] shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <a href="tel:+233289553203" className="block hover:text-[#F5A200] transition-colors">+233 289 553 203</a>
-                  <a href="tel:+233244099243" className="block hover:text-[#F5A200] transition-colors">+233 244 099 243</a>
-                </div>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-white/55">
-                <Mail size={15} className="text-[#F5A200] shrink-0" />
-                <a href="mailto:info@geolicraftsgh.com" className="hover:text-[#F5A200] transition-colors">
-                  info@geolicraftsgh.com
-                </a>
-              </li>
+          <div className="lg:col-span-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">Visit & contact</p>
+            <ul className="space-y-3 text-sm text-stone-300">
+              <li>Dodowa, Greater Accra, Ghana</li>
+              <li><a href="tel:+233289553203" className="hover:text-white transition-colors">+233 289 553 203</a></li>
+              <li><a href="tel:+233244099243" className="hover:text-white transition-colors">+233 244 099 243</a></li>
+              <li><a href="mailto:info@geolicraftsgh.com" className="hover:text-white transition-colors">info@geolicraftsgh.com</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-white/30 text-xs">
-            &copy; {new Date().getFullYear()} Geolicrafts Company Limited. All rights reserved.
+        <div className="pt-8 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-6">
+          <p className="text-xs text-stone-500">
+            © {new Date().getFullYear()} Geolicrafts Company Limited · Est. 2004
           </p>
-          <p className="text-white/20 text-xs">
-            Est. 2004 &middot; Dodowa, Ghana
-          </p>
+          <div className="flex items-center gap-2">
+            <a href="https://www.facebook.com/Geolicrafts" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={social}>
+              <IconFacebook />
+            </a>
+            <a href="https://www.instagram.com/geolicrafts" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={social}>
+              <IconInstagram />
+            </a>
+          </div>
         </div>
       </div>
-
-      <KenteDivider height={5} />
     </footer>
   )
 }

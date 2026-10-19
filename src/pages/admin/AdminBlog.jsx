@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, X, Eye, EyeOff } from 'lucide-react'
+import { Plus, Pencil, Trash2, Eye, EyeOff, Search, BookOpen } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
+import AdminHeader from '../../components/ui/AdminHeader'
+import Pagination from '../../components/ui/Pagination'
+import Modal from '../../components/ui/Modal'
 
 const CATEGORIES = ['News', 'Crafts', 'Community', 'Events', 'Training']
+const PAGE_SIZE = 10
 const EMPTY_FORM = {
   title: '', slug: '', excerpt: '', content: '', category: '',
   image_url: '', published: false, read_time: 3,
@@ -11,6 +15,25 @@ const EMPTY_FORM = {
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+function Segmented({ value, onChange, options }) {
+  return (
+    <div className="inline-flex p-1 rounded-full bg-stone-100">
+      {options.map(o => (
+        <button
+          key={o.key}
+          type="button"
+          onClick={() => onChange(o.key)}
+          className={`h-7 px-3.5 rounded-full text-[13px] transition-all ${
+            value === o.key ? 'bg-white text-stone-900 font-medium shadow-sm' : 'text-stone-500 hover:text-stone-900'
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export default function AdminBlog() {
@@ -21,6 +44,10 @@ export default function AdminBlog() {
   const [editId, setEditId] = useState(null)
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState('write')
+  const [search, setSearch] = useState('')
+  const [status, setStatus] = useState('all')
+  const [page, setPage] = useState(1)
+  const [deleting, setDeleting] = useState(null)
 
   const load = async () => {
     const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false })
@@ -73,11 +100,11 @@ export default function AdminBlog() {
     setSaving(false)
   }
 
-  const handleDelete = async id => {
-    if (!confirm('Delete this post?')) return
-    const { error } = await supabase.from('blog_posts').delete().eq('id', id)
+  const confirmDelete = async () => {
+    const { error } = await supabase.from('blog_posts').delete().eq('id', deleting.id)
     if (error) toast.error('Delete failed')
     else { toast.success('Post deleted'); load() }
+    setDeleting(null)
   }
 
   const togglePublish = async (p) => {
@@ -88,251 +115,291 @@ export default function AdminBlog() {
     else { toast.success(!p.published ? 'Published' : 'Unpublished'); load() }
   }
 
+  const q = search.toLowerCase()
+  const filtered = posts.filter(p =>
+    (status === 'all' || (status === 'published' ? p.published : !p.published)) &&
+    (p.title.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q))
+  )
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const publishedCount = posts.filter(p => p.published).length
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-earth-900">Blog Posts</h1>
-          <p className="text-earth-500 text-sm mt-1">{posts.length} post{posts.length !== 1 ? 's' : ''} total</p>
-        </div>
-        <button onClick={openAdd} className="btn-primary">
-          <Plus size={18} /> New Post
+      <AdminHeader title="Blog posts" description={`${publishedCount} published · ${posts.length - publishedCount} draft${posts.length - publishedCount !== 1 ? 's' : ''}`}>
+        <button onClick={openAdd} className="btn-primary btn-sm">
+          <Plus size={14} /> New post
         </button>
-      </div>
+      </AdminHeader>
 
-      <div className="bg-white rounded-xl shadow-sm border border-earth-100 overflow-hidden">
-        {loading ? (
-          <div className="p-6 space-y-3">
-            {[1, 2, 3].map(i => <div key={i} className="h-16 bg-earth-50 animate-pulse rounded-lg" />)}
+      <div className="card overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border-b border-stone-100">
+          <div className="relative flex-1 sm:max-w-xs">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search posts"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
+              className="input h-9 pl-10 rounded-full"
+            />
           </div>
-        ) : posts.length === 0 ? (
-          <div className="p-12 text-center">
-            <p className="text-earth-400">No posts yet.</p>
-            <button onClick={openAdd} className="btn-primary mt-4"><Plus size={18} /> Write first post</button>
+          <div className="sm:ml-auto">
+            <Segmented
+              value={status}
+              onChange={s => { setStatus(s); setPage(1) }}
+              options={[
+                { key: 'all', label: 'All' },
+                { key: 'published', label: 'Published' },
+                { key: 'draft', label: 'Drafts' },
+              ]}
+            />
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="p-4 space-y-2">
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-14 bg-stone-50 animate-pulse rounded-xl" />)}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="py-20 text-center">
+            <span className="mx-auto mb-4 grid place-items-center h-12 w-12 rounded-full bg-stone-100 text-stone-400">
+              <BookOpen size={20} />
+            </span>
+            <p className="text-sm text-stone-500 mb-6">{posts.length === 0 ? 'No posts yet.' : 'No posts match your filters.'}</p>
+            {posts.length === 0 && <button onClick={openAdd} className="btn-primary btn-sm"><Plus size={14} /> Write your first post</button>}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-earth-50 text-earth-500 text-left">
-                  <th className="px-4 py-3 font-medium">Title</th>
-                  <th className="px-4 py-3 font-medium hidden md:table-cell">Category</th>
-                  <th className="px-4 py-3 font-medium hidden md:table-cell">Status</th>
-                  <th className="px-4 py-3 font-medium hidden lg:table-cell">Date</th>
-                  <th className="px-4 py-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-earth-50">
-                {posts.map(p => (
-                  <tr key={p.id} className="hover:bg-earth-50/50 transition-colors">
-                    <td className="px-4 py-3">
-                      <span className="font-medium text-earth-900 line-clamp-1">{p.title}</span>
-                      <span className="text-earth-400 text-xs block">/blog/{p.slug}</span>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <span className="badge">{p.category}</span>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
-                        p.published ? 'bg-green-100 text-green-700' : 'bg-earth-100 text-earth-600'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${p.published ? 'bg-green-500' : 'bg-earth-400'}`} />
-                        {p.published ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-earth-400 hidden lg:table-cell text-xs">
-                      {p.published_at ? new Date(p.published_at).toLocaleDateString() : '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1 justify-end">
-                        <button
-                          onClick={() => togglePublish(p)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            p.published
-                              ? 'text-earth-400 hover:text-amber-600 hover:bg-amber-50'
-                              : 'text-earth-400 hover:text-green-600 hover:bg-green-50'
-                          }`}
-                          title={p.published ? 'Unpublish' : 'Publish'}
-                        >
-                          {p.published ? <EyeOff size={15} /> : <Eye size={15} />}
-                        </button>
-                        <button
-                          onClick={() => openEdit(p)}
-                          className="p-2 text-earth-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
-                        >
-                          <Pencil size={15} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          className="p-2 text-earth-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs text-stone-500 border-b border-stone-100">
+                    <th className="pl-5 pr-4 h-11 font-medium">Title</th>
+                    <th className="px-4 h-11 font-medium hidden md:table-cell">Category</th>
+                    <th className="px-4 h-11 font-medium hidden md:table-cell">Status</th>
+                    <th className="px-4 h-11 font-medium hidden lg:table-cell">Published</th>
+                    <th className="pl-4 pr-5 h-11"><span className="sr-only">Actions</span></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {paginated.map(p => (
+                    <tr key={p.id} className="hover:bg-stone-50/70 transition-colors">
+                      <td className="pl-5 pr-4 py-3 max-w-md">
+                        <button onClick={() => openEdit(p)} className="text-left">
+                          <span className="font-medium text-stone-900 line-clamp-1 hover:text-clay-700 transition-colors">{p.title}</span>
+                          <span className="text-stone-400 text-xs font-mono block mt-0.5 truncate">/blog/{p.slug}</span>
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className="chip">{p.category}</span>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-0.5 rounded-full ${
+                          p.published ? 'bg-emerald-50 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${p.published ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+                          {p.published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-stone-500 hidden lg:table-cell text-xs tabular-nums">
+                        {p.published_at ? new Date(p.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                      </td>
+                      <td className="pl-4 pr-5 py-3">
+                        <div className="flex items-center gap-0.5 justify-end">
+                          <button
+                            onClick={() => togglePublish(p)}
+                            className="icon-btn"
+                            title={p.published ? 'Unpublish' : 'Publish'}
+                            aria-label={p.published ? 'Unpublish' : 'Publish'}
+                          >
+                            {p.published ? <EyeOff size={15} /> : <Eye size={15} />}
+                          </button>
+                          <button onClick={() => openEdit(p)} className="icon-btn" aria-label="Edit">
+                            <Pencil size={15} />
+                          </button>
+                          <button onClick={() => setDeleting(p)} className="icon-btn hover:!text-red-600 hover:!bg-red-50" aria-label="Delete">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onChange={setPage}
+              totalItems={filtered.length}
+              pageSize={PAGE_SIZE}
+              className="px-5 py-3 border-t border-stone-100"
+            />
+          </>
         )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-earth-950/60">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-earth-100 sticky top-0 bg-white z-10">
-              <h2 className="font-display font-bold text-lg text-earth-900">
-                {editId ? 'Edit Post' : 'New Post'}
-              </h2>
-              <button onClick={closeModal} className="text-earth-400 hover:text-earth-700 p-1">
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSave} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-earth-700 mb-1.5">Title *</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={handleTitleChange}
-                  required
-                  placeholder="Post title..."
-                  className="input-field text-lg"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 mb-1.5">Slug *</label>
-                  <input
-                    type="text"
-                    value={form.slug}
-                    onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
-                    required
-                    placeholder="url-slug"
-                    className="input-field font-mono text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 mb-1.5">Category *</label>
-                  <select
-                    value={form.category}
-                    onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                    required
-                    className="input-field"
-                  >
-                    <option value="">Select category</option>
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 mb-1.5">Cover Image URL</label>
-                  <input
-                    type="url"
-                    value={form.image_url}
-                    onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                    placeholder="https://..."
-                    className="input-field"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 mb-1.5">Read Time (min)</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={60}
-                    value={form.read_time}
-                    onChange={e => setForm(f => ({ ...f, read_time: e.target.value }))}
-                    className="input-field"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-earth-700 mb-1.5">Excerpt</label>
-                <textarea
-                  value={form.excerpt}
-                  onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))}
-                  rows={2}
-                  placeholder="Short summary shown in blog list..."
-                  className="input-field resize-none"
-                />
-              </div>
-
-              {/* Content tabs */}
-              <div>
-                <div className="flex gap-2 mb-2">
-                  <button
-                    type="button"
-                    onClick={() => setTab('write')}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      tab === 'write' ? 'bg-brand-600 text-white' : 'bg-earth-100 text-earth-600'
-                    }`}
-                  >
-                    Write
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTab('preview')}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      tab === 'preview' ? 'bg-brand-600 text-white' : 'bg-earth-100 text-earth-600'
-                    }`}
-                  >
-                    Preview
-                  </button>
-                </div>
-                <label className="block text-sm font-medium text-earth-700 mb-1.5">Content</label>
-                {tab === 'write' ? (
-                  <textarea
-                    value={form.content}
-                    onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-                    rows={14}
-                    placeholder="Write your post content here. Use ## for headings, **bold** for bold text, and - for bullet lists."
-                    className="input-field resize-y font-mono text-sm"
-                  />
-                ) : (
-                  <div className="border border-earth-200 rounded-lg p-4 min-h-[14rem] bg-earth-50 text-sm prose-custom overflow-y-auto">
-                    {form.content ? (
-                      form.content.split('\n').map((line, i) => {
-                        if (line.startsWith('## ')) return <h2 key={i} className="font-bold text-lg mt-4 mb-2">{line.slice(3)}</h2>
-                        if (line.startsWith('- ')) return <li key={i} className="ml-4">{line.slice(2)}</li>
-                        if (line.trim() === '') return <br key={i} />
-                        return <p key={i} className="mb-2">{line.replace(/\*\*(.*?)\*\*/g, (_, t) => t)}</p>
-                      })
-                    ) : <p className="text-earth-400">Nothing to preview yet...</p>}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 py-2">
+      {/* Editor */}
+      <Modal
+        open={showModal}
+        onClose={closeModal}
+        title={editId ? 'Edit post' : 'New post'}
+        size="lg"
+        footer={
+          <>
+            <label className="mr-auto flex items-center gap-3 cursor-pointer select-none">
+              <span className="relative inline-flex">
                 <input
                   type="checkbox"
-                  id="published"
                   checked={form.published}
                   onChange={e => setForm(f => ({ ...f, published: e.target.checked }))}
-                  className="w-4 h-4 accent-brand-600"
+                  className="peer sr-only"
                 />
-                <label htmlFor="published" className="text-sm font-medium text-earth-700">
-                  Publish immediately
-                </label>
-              </div>
+                <span className="h-6 w-10 rounded-full bg-stone-200 peer-checked:bg-stone-900 transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-clay-500 peer-focus-visible:ring-offset-2" />
+                <span className="absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+              </span>
+              <span className="text-sm text-stone-700">Publish</span>
+            </label>
+            <button type="button" onClick={closeModal} className="btn-ghost">Cancel</button>
+            <button type="submit" form="post-form" disabled={saving} className="btn-primary">
+              {saving ? 'Saving…' : editId ? 'Save changes' : 'Create post'}
+            </button>
+          </>
+        }
+      >
+        <form id="post-form" onSubmit={handleSave} className="p-6 space-y-5">
+          <input
+            type="text"
+            value={form.title}
+            onChange={handleTitleChange}
+            required
+            placeholder="Post title"
+            aria-label="Title"
+            className="w-full font-display text-4xl text-stone-900 placeholder:text-stone-300 focus:outline-none"
+          />
 
-              <div className="flex gap-3 pt-2 sticky bottom-0 bg-white py-4 -mx-6 px-6 border-t border-earth-100">
-                <button type="button" onClick={closeModal} className="flex-1 btn-secondary">Cancel</button>
-                <button type="submit" disabled={saving} className="flex-1 btn-primary justify-center">
-                  {saving ? 'Saving...' : editId ? 'Update Post' : 'Create Post'}
-                </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label" htmlFor="b-slug">Slug</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-stone-400 font-mono pointer-events-none">/blog/</span>
+                <input
+                  id="b-slug"
+                  type="text"
+                  value={form.slug}
+                  onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
+                  required
+                  placeholder="url-slug"
+                  className="input font-mono pl-[4.25rem]"
+                />
               </div>
-            </form>
+            </div>
+            <div>
+              <label className="label" htmlFor="b-cat">Category</label>
+              <select
+                id="b-cat"
+                value={form.category}
+                onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                required
+                className="input"
+              >
+                <option value="">Select category</option>
+                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="label" htmlFor="b-img">Cover image URL</label>
+              <input
+                id="b-img"
+                type="url"
+                value={form.image_url}
+                onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
+                placeholder="https://…"
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="b-rt">Read time (min)</label>
+              <input
+                id="b-rt"
+                type="number"
+                min={1}
+                max={60}
+                value={form.read_time}
+                onChange={e => setForm(f => ({ ...f, read_time: e.target.value }))}
+                className="input"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="label" htmlFor="b-ex">Excerpt</label>
+            <textarea
+              id="b-ex"
+              value={form.excerpt}
+              onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))}
+              rows={2}
+              placeholder="Short summary shown in the journal list…"
+              className="input resize-none"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="label mb-0">Content</span>
+              <Segmented
+                value={tab}
+                onChange={setTab}
+                options={[{ key: 'write', label: 'Write' }, { key: 'preview', label: 'Preview' }]}
+              />
+            </div>
+            {tab === 'write' ? (
+              <>
+                <textarea
+                  value={form.content}
+                  onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
+                  rows={14}
+                  placeholder="Write your post here…"
+                  className="input resize-y font-mono text-[13px]"
+                />
+                <p className="text-xs text-stone-400 mt-2">
+                  <code>## Heading</code> · <code>**bold**</code> · <code>- list item</code> · <code>![alt](url "caption")</code> · <code>[gallery]/a.jpg,/b.jpg</code>
+                </p>
+              </>
+            ) : (
+              <div className="rounded-xl ring-1 ring-stone-200 p-5 min-h-[14rem] bg-stone-50 text-sm overflow-y-auto">
+                {form.content ? (
+                  form.content.split('\n').map((line, i) => {
+                    if (line.startsWith('## ')) return <h2 key={i} className="text-2xl mt-4 mb-2">{line.slice(3)}</h2>
+                    if (line.startsWith('- ')) return <li key={i} className="ml-4 text-stone-700">{line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</li>
+                    if (line.trim() === '') return <br key={i} />
+                    return <p key={i} className="mb-2 text-stone-700">{line.replace(/\*\*(.*?)\*\*/g, '$1')}</p>
+                  })
+                ) : <p className="text-stone-400">Nothing to preview yet…</p>}
+              </div>
+            )}
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete confirm */}
+      <Modal
+        open={!!deleting}
+        onClose={() => setDeleting(null)}
+        title="Delete post"
+        size="sm"
+        footer={
+          <>
+            <button onClick={() => setDeleting(null)} className="btn-ghost">Cancel</button>
+            <button onClick={confirmDelete} className="btn-danger">Delete</button>
+          </>
+        }
+      >
+        <p className="p-6 text-sm text-stone-600">
+          Delete <span className="font-medium text-stone-900">{deleting?.title}</span>? This can't be undone.
+        </p>
+      </Modal>
     </div>
   )
 }
