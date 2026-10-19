@@ -17,10 +17,13 @@ const SORTS = ['featured', 'newest', 'name']
 export default function Products() {
   const { products, loading } = useProducts()
   const { t, tc } = useI18n()
-  const [search, setSearch] = useState('')
+  const [params, setParams] = useSearchParams()
+  // ?q= pre-fills the search (old WordPress product links redirect here as /products?q=djembe-carved-2)
+  const [search, setSearch] = useState(() =>
+    (params.get('q') || '').replace(/-\d+$/, '').replace(/[-_]+/g, ' ').trim()
+  )
   const [page, setPage] = useState(1)
   const [sort, setSort] = useState('featured')
-  const [params, setParams] = useSearchParams()
   const ALL_CATEGORIES = ['All', ...useCategories(products)]
   const searchRef = useRef()
   const gridRef = useRef()
