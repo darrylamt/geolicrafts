@@ -30,7 +30,7 @@ const processImages = [IMG.process, IMG.workers1, IMG.training]
 
 function SectionHead({ eyebrow, title, action }) {
   return (
-    <div className="flex items-end justify-between gap-6 mb-10 md:mb-14">
+    <div className="flex items-end justify-between gap-6 mb-8 md:mb-14">
       <div>
         <p className="eyebrow mb-4">{eyebrow}</p>
         <h2 className="text-4xl md:text-6xl leading-[1] text-stone-900 max-w-2xl">{title}</h2>
@@ -47,7 +47,7 @@ export default function Home() {
     <div>
       <Seo description={t('home.intro')} />
       {/* ─── Hero ─── */}
-      <section className="pt-32 md:pt-44 pb-20 md:pb-28">
+      <section className="pt-24 md:pt-44 pb-14 md:pb-28">
         <div className="container-page">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-end animate-fade-up">
             <div className="lg:col-span-8">
@@ -60,7 +60,7 @@ export default function Home() {
               </h1>
             </div>
             <div className="lg:col-span-4 lg:pb-3">
-              <p className="text-stone-500 text-lg leading-relaxed mb-8">{t('home.intro')}</p>
+              <p className="text-stone-500 text-base md:text-lg leading-relaxed mb-6 md:mb-8">{t('home.intro')}</p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/products" className="btn-primary btn-lg">
                   {t('home.explore')} <ArrowRight size={16} />
@@ -70,7 +70,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative mt-14 md:mt-20 rounded-[2rem] overflow-hidden aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] bg-stone-200 animate-fade-up [animation-delay:120ms]">
+          <div className="relative mt-10 md:mt-20 rounded-3xl md:rounded-[2rem] overflow-hidden aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] bg-stone-200 animate-fade-up [animation-delay:120ms]">
             <img
               src={IMG.workshop}
               alt="Geolicrafts artisans carving drums at the Dodowa workshop"
@@ -85,7 +85,7 @@ export default function Home() {
           </div>
 
           {/* Stats */}
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 mt-14 md:mt-20 pt-10 border-t border-stone-200">
+          <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 mt-10 md:mt-20 pt-8 md:pt-10 border-t border-stone-200">
             {t('home.stats').map(({ value, label }) => (
               <div key={label}>
                 <dt className="sr-only">{label}</dt>
@@ -98,7 +98,7 @@ export default function Home() {
       </section>
 
       {/* ─── Collections ─── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-white">
         <div className="container-page">
           <SectionHead
             eyebrow={t('home.collections.eyebrow')}
@@ -109,14 +109,14 @@ export default function Home() {
               </Link>
             }
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {t('home.collections.items').map(({ title, items }, i) => (
               <Link
                 key={title}
                 to={`/products?category=${encodeURIComponent(categories[i].category)}`}
                 className="group block"
               >
-                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-stone-100">
+                <div className="relative aspect-[4/3] md:aspect-[4/5] rounded-2xl overflow-hidden bg-stone-100">
                   <img
                     src={categories[i].image}
                     alt={title}
@@ -127,7 +127,7 @@ export default function Home() {
                     <ArrowUpRight size={16} />
                   </span>
                 </div>
-                <h3 className="mt-5 text-3xl text-stone-900">{title}</h3>
+                <h3 className="mt-4 md:mt-5 text-3xl text-stone-900">{title}</h3>
                 <p className="mt-1.5 text-sm text-stone-500">{items}</p>
               </Link>
             ))}
@@ -141,9 +141,9 @@ export default function Home() {
       <FeaturedProducts />
 
       {/* ─── Story ─── */}
-      <section className="py-20 md:py-28">
-        <div className="container-page grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-stone-200">
+      <section className="py-14 md:py-28">
+        <div className="container-page grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
+          <div className="relative aspect-[4/3] lg:aspect-[4/5] rounded-2xl overflow-hidden bg-stone-200">
             <img
               src={IMG.process}
               alt="Artisan carving a djembe drum by hand"
@@ -153,7 +153,7 @@ export default function Home() {
           </div>
           <div>
             <p className="eyebrow mb-5">{t('home.story.eyebrow')}</p>
-            <h2 className="text-4xl md:text-6xl leading-[1] text-stone-900 mb-8">{t('home.story.title')}</h2>
+            <h2 className="text-4xl md:text-6xl leading-[1] text-stone-900 mb-6 md:mb-8">{t('home.story.title')}</h2>
             <div className="space-y-5 text-stone-600 leading-relaxed max-w-lg">
               <p>{t('home.story.p1')}</p>
               <p>{t('home.story.p2')}</p>
@@ -166,16 +166,16 @@ export default function Home() {
       </section>
 
       {/* ─── Process ─── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-white">
         <div className="container-page">
           <SectionHead eyebrow={t('home.process.eyebrow')} title={t('home.process.title')} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 md:gap-6">
             {t('home.process.steps').map(({ title, text }, i) => (
               <figure key={title}>
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-stone-100">
+                <div className="aspect-[4/3] sm:aspect-[3/4] rounded-2xl overflow-hidden bg-stone-100">
                   <img src={processImages[i]} alt={title} loading="lazy" className="w-full h-full object-cover" />
                 </div>
-                <figcaption className="mt-5 flex gap-4">
+                <figcaption className="mt-4 md:mt-5 flex gap-4">
                   <span className="text-xs text-stone-400 tabular-nums pt-1.5">0{i + 1}</span>
                   <div>
                     <p className="font-medium text-stone-900">{title}</p>
@@ -189,8 +189,8 @@ export default function Home() {
       </section>
 
       {/* ─── Global reach ─── */}
-      <section className="py-20 md:py-28">
-        <div className="container-page grid lg:grid-cols-12 gap-12 lg:gap-16">
+      <section className="py-14 md:py-28">
+        <div className="container-page grid lg:grid-cols-12 gap-8 lg:gap-16">
           <div className="lg:col-span-5">
             <p className="eyebrow mb-5">{t('home.reach.eyebrow')}</p>
             <h2 className="text-4xl md:text-6xl leading-[1] text-stone-900 mb-8">
@@ -200,8 +200,8 @@ export default function Home() {
           </div>
           <ul className="lg:col-span-7 border-t border-stone-200 self-end">
             {t('home.reach.markets').map(({ country, role }) => (
-              <li key={country} className="group flex items-center justify-between gap-4 py-5 border-b border-stone-200">
-                <span className="font-display text-3xl text-stone-900 group-hover:translate-x-1 transition-transform">{country}</span>
+              <li key={country} className="group flex items-center justify-between gap-4 py-4 md:py-5 border-b border-stone-200">
+                <span className="font-display text-2xl md:text-3xl text-stone-900 group-hover:translate-x-1 transition-transform">{country}</span>
                 <span className="text-sm text-stone-500 text-right">{role}</span>
               </li>
             ))}
@@ -210,9 +210,9 @@ export default function Home() {
       </section>
 
       {/* ─── Warehouse ─── */}
-      <section className="pb-20 md:pb-28">
+      <section className="pb-14 md:pb-28">
         <div className="container-page">
-          <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] bg-stone-300">
+          <div className="relative rounded-3xl md:rounded-[2rem] overflow-hidden aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] bg-stone-300">
             <img
               src={IMG.warehouse}
               alt="Geolicrafts export warehouse — hundreds of drums ready to ship"
@@ -229,12 +229,12 @@ export default function Home() {
       </section>
 
       {/* ─── Journey ─── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-white">
         <div className="container-page">
           <SectionHead eyebrow={t('home.journey.eyebrow')} title={t('home.journey.title')} />
           <ol className="border-t border-stone-200">
             {t('home.journey.milestones').map(({ year, title, text }) => (
-              <li key={year} className="grid grid-cols-12 gap-4 py-6 md:py-8 border-b border-stone-200">
+              <li key={year} className="grid grid-cols-12 gap-x-4 gap-y-2 py-5 md:py-8 border-b border-stone-200">
                 <span className="col-span-12 md:col-span-3 font-display text-4xl text-clay-600 leading-none">{year}</span>
                 <span className="col-span-12 md:col-span-3 font-medium text-stone-900">{title}</span>
                 <span className="col-span-12 md:col-span-6 text-stone-500 leading-relaxed">{text}</span>
@@ -245,9 +245,9 @@ export default function Home() {
       </section>
 
       {/* ─── Founder ─── */}
-      <section className="py-20 md:py-28">
-        <div className="container-page grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-          <div className="lg:col-span-5 relative aspect-[4/5] rounded-2xl overflow-hidden bg-stone-200">
+      <section className="py-14 md:py-28">
+        <div className="container-page grid lg:grid-cols-12 gap-8 lg:gap-20 items-center">
+          <div className="lg:col-span-5 relative aspect-[4/3] lg:aspect-[4/5] rounded-2xl overflow-hidden bg-stone-200">
             <img
               src={IMG.founder}
               alt="George Akologo"
@@ -257,11 +257,11 @@ export default function Home() {
             />
           </div>
           <div className="lg:col-span-7">
-            <p className="eyebrow mb-8">{t('home.founder.eyebrow')}</p>
-            <blockquote className="font-display text-4xl md:text-5xl leading-[1.1] text-stone-900">
+            <p className="eyebrow mb-5 md:mb-8">{t('home.founder.eyebrow')}</p>
+            <blockquote className="font-display text-3xl md:text-5xl leading-[1.1] text-stone-900">
               {t('home.founder.quote')}
             </blockquote>
-            <div className="mt-10 flex items-center gap-4">
+            <div className="mt-6 md:mt-10 flex items-center gap-4">
               <span className="h-px w-10 bg-stone-300" />
               <div>
                 <p className="font-medium text-stone-900">George Akologo</p>
@@ -278,11 +278,11 @@ export default function Home() {
       <Testimonials />
 
       {/* ─── CTA ─── */}
-      <section className="pb-20 md:pb-28">
+      <section className="pb-14 md:pb-28">
         <div className="container-page">
-          <div className="rounded-[2rem] bg-clay-600 text-white px-6 py-16 sm:px-12 md:py-24 text-center">
+          <div className="rounded-3xl md:rounded-[2rem] bg-clay-600 text-white px-6 py-12 sm:px-12 md:py-24 text-center">
             <p className="text-xs uppercase tracking-[0.18em] text-white/70 mb-6">{t('home.cta.eyebrow')}</p>
-            <h2 className="text-5xl md:text-7xl leading-[0.95] max-w-3xl mx-auto">{t('home.cta.title')}</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl leading-[0.95] max-w-3xl mx-auto">{t('home.cta.title')}</h2>
             <p className="mt-6 text-white/80 text-lg max-w-lg mx-auto">{t('home.cta.text')}</p>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               <Link to="/contact" className="btn-light btn-lg">
@@ -305,7 +305,7 @@ function FeaturedProducts() {
   if (featured.length === 0) return null
 
   return (
-    <section className="py-20 md:py-28">
+    <section className="py-14 md:py-28">
       <div className="container-page">
         <SectionHead
           eyebrow={t('home.featured.eyebrow')}
@@ -316,7 +316,7 @@ function FeaturedProducts() {
             </Link>
           }
         />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-10">
           {featured.map(p => (
             <Link key={p.id} to={productPath(p)} className="group">
               <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-stone-100">
@@ -349,7 +349,7 @@ function Testimonials() {
   if (testimonials.length === 0 && partners.length === 0) return null
 
   return (
-    <section className="py-20 md:py-28 bg-white">
+    <section className="py-14 md:py-28 bg-white">
       <div className="container-page">
         {testimonials.length > 0 && (
           <>

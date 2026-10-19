@@ -32,6 +32,8 @@ export default {
   },
 
   common: {
+    share: 'Share',
+    linkCopied: 'Link copied',
     clear: 'Clear',
     clearFilters: 'Clear filters',
     showing: 'Showing',

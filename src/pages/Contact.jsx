@@ -57,8 +57,8 @@ export default function Contact() {
         description={t('contact.intro')}
       />
 
-      <section className="pb-20 md:pb-28">
-        <div className="container-page grid lg:grid-cols-12 gap-12 lg:gap-16">
+      <section className="pb-14 md:pb-28">
+        <div className="container-page grid lg:grid-cols-12 gap-10 lg:gap-16">
           {/* Info */}
           <aside className="lg:col-span-4 space-y-10">
             <ul className="space-y-7">
@@ -104,7 +104,7 @@ export default function Contact() {
 
           {/* Form */}
           <div className="lg:col-span-8">
-            <div className="card p-6 sm:p-10 relative">
+            <div className="card p-5 sm:p-10 relative">
               {submitted ? (
                 <div className="text-center py-16">
                   <span className="mx-auto grid place-items-center h-14 w-14 rounded-full bg-clay-50 text-clay-600 mb-6">

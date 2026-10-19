@@ -64,7 +64,7 @@ export default function Quote() {
         description={t('quote.pageIntro')}
       />
 
-      <section className="pb-20 md:pb-28">
+      <section className="pb-14 md:pb-28">
         <div className="container-page">
           {items.length === 0 ? (
             <div className="card py-20 px-6 text-center">

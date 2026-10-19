@@ -133,7 +133,7 @@ export default function Blog() {
         </div>
       </div>
 
-      <section className="py-12 md:py-16 min-h-[60vh]">
+      <section className="py-8 md:py-16 min-h-[60vh]">
         <div className="container-page">
           {loading ? (
             <div className="animate-pulse grid md:grid-cols-2 gap-10">
@@ -153,7 +153,7 @@ export default function Blog() {
             <>
               {/* Featured */}
               {featured && page === 1 && (
-                <Link to={`/blog/${featured.slug}`} className="group grid md:grid-cols-2 gap-8 md:gap-14 items-center mb-20">
+                <Link to={`/blog/${featured.slug}`} className="group grid md:grid-cols-2 gap-5 md:gap-14 items-center mb-12 md:mb-20">
                   <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-stone-200">
                     <img
                       src={featured.image_url}
@@ -163,8 +163,8 @@ export default function Blog() {
                     />
                   </div>
                   <div>
-                    <span className="chip mb-6">{t('blog.featured')}</span>
-                    <h2 className="text-4xl md:text-5xl leading-[1.05] text-stone-900 mb-5">{featured.title}</h2>
+                    <span className="chip mb-4 md:mb-6">{t('blog.featured')}</span>
+                    <h2 className="text-3xl md:text-5xl leading-[1.05] text-stone-900 mb-4 md:mb-5">{featured.title}</h2>
                     <p className="text-stone-500 leading-relaxed mb-6 line-clamp-3">{featured.excerpt}</p>
                     <Meta post={featured} />
                     <span className="link-arrow mt-8">
@@ -176,10 +176,10 @@ export default function Blog() {
 
               {rest.length > 0 && (
                 <>
-                  <h2 id="latest" className="scroll-mt-28 font-sans text-sm font-medium tracking-normal text-stone-900 pb-4 mb-10 border-b border-stone-200">
+                  <h2 id="latest" className="scroll-mt-28 font-sans text-sm font-medium tracking-normal text-stone-900 pb-4 mb-6 md:mb-10 border-b border-stone-200">
                     {t('blog.latest')}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 md:gap-y-14">
                     {paginated.map(post => (
                       <Link key={post.id} to={`/blog/${post.slug}`} className="group">
                         <div className="aspect-[3/2] rounded-2xl overflow-hidden bg-stone-200 mb-5">

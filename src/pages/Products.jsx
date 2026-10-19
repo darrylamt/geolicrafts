@@ -67,7 +67,7 @@ export default function Products() {
         title={<>{t('products.title')} <em className="text-clay-600">{t('products.titleEm')}</em></>}
         description={t('products.intro')}
       >
-        <Link to="/catalogue" className="btn-secondary mt-8">
+        <Link to="/catalogue" className="btn-secondary mt-6 md:mt-8">
           <Download size={15} /> {t('products.catalogue')}
         </Link>
       </PageHeader>
@@ -117,7 +117,7 @@ export default function Products() {
       </div>
 
       {/* ─── Grid ─── */}
-      <section ref={gridRef} className="py-10 md:py-14 min-h-[60vh]">
+      <section ref={gridRef} className="py-6 md:py-14 min-h-[60vh]">
         <div className="container-page">
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6">
@@ -137,7 +137,7 @@ export default function Products() {
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-5 md:mb-8">
                 <p className="text-sm text-stone-500 tabular-nums">
                   {filtered.length === 1 ? t('products.piece') : t('products.pieces', { count: filtered.length })}
                   {category !== 'All' && <> {t('products.in')} <span className="text-stone-900">{tc(category)}</span></>}
@@ -160,7 +160,7 @@ export default function Products() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-12">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-7 sm:gap-x-4 md:gap-x-6 md:gap-y-12">
                 {paginated.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -173,7 +173,7 @@ export default function Products() {
                 totalItems={filtered.length}
                 pageSize={PAGE_SIZE}
                 labels={{ showing: t('common.showing'), of: t('common.of'), previous: t('common.previous'), next: t('common.next') }}
-                className="mt-16 pt-8 border-t border-stone-200"
+                className="mt-10 md:mt-16 pt-6 md:pt-8 border-t border-stone-200"
               />
             </>
           )}
@@ -223,7 +223,7 @@ function ProductCard({ product }) {
           </span>
         )}
       </div>
-      <p className="mt-4 text-xs text-stone-500">{tc(product.category)}</p>
+      <p className="mt-3 md:mt-4 text-xs text-stone-500 truncate">{tc(product.category)}</p>
       <h3 className="mt-1 font-sans text-[15px] font-medium tracking-normal text-stone-900 leading-snug group-hover:text-clay-700 transition-colors">
         {product.name}
       </h3>

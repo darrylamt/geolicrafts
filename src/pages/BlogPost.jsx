@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
 import { coverFor, DEFAULT_COVER } from '../lib/blog'
+import ShareButton from '../components/ui/ShareButton'
 import Seo from '../components/ui/Seo'
 
 const FALLBACK_POSTS = [
@@ -375,10 +376,10 @@ export default function BlogPost() {
   }
 
   return (
-    <article className="pt-28 md:pt-36 pb-20 md:pb-28">
+    <article className="pt-24 md:pt-36 pb-14 md:pb-28">
       <Seo title={post.title} description={post.excerpt} image={`/api/og?type=post&slug=${encodeURIComponent(post.slug)}`} type="article" />
       <header className="container-page max-w-3xl text-center animate-fade-up">
-        <Link to="/blog" className="btn-ghost btn-sm mb-10">
+        <Link to="/blog" className="btn-ghost btn-sm mb-6 md:mb-10">
           <ArrowLeft size={14} /> {t('blog.back')}
         </Link>
         <p className="flex items-center justify-center gap-2 text-sm text-stone-500 mb-6">
@@ -388,10 +389,13 @@ export default function BlogPost() {
           <span className="h-1 w-1 rounded-full bg-stone-300" />
           {t('blog.minRead', { count: post.read_time })}
         </p>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.02] text-stone-900">{post.title}</h1>
+        <h1 className="text-[2.1rem] sm:text-5xl md:text-6xl leading-[1.05] text-stone-900">{post.title}</h1>
+        <div className="mt-6 flex justify-center">
+          <ShareButton title={post.title} text={post.excerpt || post.title} className="btn-secondary btn-sm" />
+        </div>
       </header>
 
-      <div className="container-page mt-12 md:mt-16">
+      <div className="container-page mt-8 md:mt-16">
         <div className="rounded-[2rem] overflow-hidden aspect-[16/10] md:aspect-[21/9] bg-stone-200">
           <img
             src={coverFor(post)}
@@ -402,7 +406,7 @@ export default function BlogPost() {
         </div>
       </div>
 
-      <div className="container-page max-w-2xl mt-14 md:mt-20">
+      <div className="container-page max-w-2xl mt-10 md:mt-20">
         {post.content ? renderContent(post.content) : (
           <p className="text-stone-700 text-[17px] leading-[1.8]">{post.excerpt}</p>
         )}

@@ -31,10 +31,10 @@ export default function Footer() {
   const { t } = useI18n()
   return (
     <footer className="bg-stone-950 text-stone-400">
-      <div className="container-page pt-20 pb-24 sm:pb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">
-          <div className="lg:col-span-6">
-            <h2 className="font-display text-4xl md:text-5xl text-white leading-[1.05] max-w-md">
+      <div className="container-page pt-14 md:pt-20 pb-24 sm:pb-10">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 lg:gap-12 pb-12 md:pb-16 border-b border-white/10">
+          <div className="col-span-2 lg:col-span-6">
+            <h2 className="font-display text-3xl md:text-5xl text-white leading-[1.05] max-w-md">
               {t('footer.headline')} <em className="text-clay-300">{t('footer.headlineEm')}</em>
             </h2>
             <div className="flex flex-wrap gap-2 mt-8">
@@ -58,7 +58,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="lg:col-span-3">
+          <div className="col-span-2 sm:col-span-1 lg:col-span-3">
             <p className="text-xs uppercase tracking-[0.18em] text-stone-500 mb-5">{t('footer.visit')}</p>
             <ul className="space-y-3 text-sm text-stone-300">
               <li>{SITE.address}</li>
