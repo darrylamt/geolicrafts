@@ -7,7 +7,7 @@
 @layer base {
   html { scroll-behavior: smooth; }
   body {
-    @apply font-sans text-stone-900 bg-stone-50 antialiased;
+    @apply font-sans text-stone-900 bg-[#faf5ec] antialiased;
     margin: 0;
     font-feature-settings: 'cv11', 'ss01';
   }
@@ -18,7 +18,7 @@
 
 @layer components {
   .container-page { @apply max-w-6xl mx-auto px-5 sm:px-8; }
-  .eyebrow { @apply text-xs font-medium uppercase tracking-[0.18em] text-stone-500; }
+  .eyebrow { @apply text-xs font-medium uppercase tracking-[0.18em] text-clay-600; }
 
   /* ── Buttons ── */
   .btn {
@@ -29,7 +29,7 @@
   }
   .btn-sm { @apply h-9 px-4 text-[13px]; }
   .btn-lg { @apply h-12 px-7 text-[15px]; }
-  .btn-primary { @apply btn bg-stone-900 text-white hover:bg-stone-700; }
+  .btn-primary { @apply btn bg-clay-600 text-white hover:bg-clay-700; }
   .btn-accent { @apply btn bg-clay-600 text-white hover:bg-clay-700; }
   .btn-secondary { @apply btn bg-white text-stone-900 ring-1 ring-inset ring-stone-200 hover:ring-stone-300 hover:bg-stone-50; }
   .btn-ghost { @apply btn text-stone-600 hover:text-stone-900 hover:bg-stone-100; }

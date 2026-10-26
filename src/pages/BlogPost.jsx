@@ -175,7 +175,7 @@ In 2021 alone, Geolicrafts exported products worth 771,000 euros — a significa
 
 ## Ordering & Wholesale
 
-We supply to individual buyers, boutique retailers, and wholesale importers. Contact us at info@geolicraftsgh.com for current pricing, minimum order quantities, and lead times.
+We supply to individual buyers, boutique retailers, and wholesale importers. Contact us at geolicrafts@yahoo.com for current pricing, minimum order quantities, and lead times.
     `,
     category: 'Crafts',
     image_url: '/images/products/bolga-basket-round.webp',
@@ -238,7 +238,7 @@ The majority of our drums are exported to Europe and the United States — desti
 
 ![The export warehouse — hundreds of drums stacked and ready for shipment](/pics/warehouse2.webp "Ready for the world: Geolicrafts' warehouse holds hundreds of finished drums awaiting export")
 
-Interested in wholesale drum orders? Contact us at info@geolicraftsgh.com — we supply individual units and full container loads.
+Interested in wholesale drum orders? Contact us at geolicrafts@yahoo.com — we supply individual units and full container loads.
     `,
     category: 'Crafts',
     image_url: '/images/products/dundum-drums.webp',

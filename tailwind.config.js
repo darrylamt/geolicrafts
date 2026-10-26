@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Single warm accent — terracotta clay. Neutrals use Tailwind's built-in `stone`.
+        // Terracotta clay is the main accent; ochre and forest add warmth. Neutrals use `stone`.
         clay: {
           50:  '#fbf5f1',
           100: '#f5e6dc',
@@ -20,6 +20,26 @@ export default {
           800: '#6d3523',
           900: '#5a2e20',
           950: '#30150e',
+        },
+        ochre: {
+          50:  '#fdf8ec',
+          100: '#f9edcc',
+          200: '#f2d994',
+          300: '#eac15c',
+          400: '#e3a935',
+          500: '#d18c1f',
+          600: '#b46c17',
+          700: '#8f5017',
+        },
+        forest: {
+          50:  '#f1f6f2',
+          100: '#dceadf',
+          300: '#8fb89a',
+          600: '#2f6b45',
+          700: '#255638',
+          800: '#1f452f',
+          900: '#1a3a28',
+          950: '#0d2015',
         },
       },
       fontFamily: {

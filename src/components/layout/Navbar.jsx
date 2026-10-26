@@ -59,11 +59,11 @@ export default function Navbar() {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled || open
-          ? 'bg-stone-50/85 backdrop-blur-xl border-b border-stone-200/70'
+          ? 'bg-[#faf5ec]/90 backdrop-blur-xl border-b border-stone-200/70'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
-      <div className="container-page flex items-center justify-between h-16 md:h-[72px]">
+      <div className="container-page flex items-center justify-between h-[72px] md:h-20">
         <Logo />
 
         <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
@@ -73,7 +73,7 @@ export default function Navbar() {
               to={to}
               className={({ isActive }) =>
                 `px-4 py-2 rounded-full text-sm transition-colors ${
-                  isActive ? 'text-stone-900 font-medium bg-stone-900/[0.05]' : 'text-stone-500 hover:text-stone-900'
+                  isActive ? 'text-clay-700 font-medium bg-clay-100' : 'text-stone-600 hover:text-clay-700'
                 }`
               }
             >
@@ -101,7 +101,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden h-[calc(100dvh-4rem)] overflow-y-auto bg-stone-50 animate-fade-in">
+        <div className="lg:hidden h-[calc(100dvh-72px)] md:h-[calc(100dvh-80px)] overflow-y-auto bg-[#faf5ec] animate-fade-in">
           <nav className="container-page flex flex-col pt-6 pb-10" aria-label="Mobile">
             {links.map(({ to, key }, i) => (
               <NavLink

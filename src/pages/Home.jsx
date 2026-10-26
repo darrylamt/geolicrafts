@@ -52,7 +52,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-end animate-fade-up">
             <div className="lg:col-span-8">
               <p className="eyebrow mb-6 flex items-center gap-3">
-                <span className="h-px w-8 bg-stone-300" />
+                <span className="h-px w-8 bg-clay-400" />
                 {t('home.eyebrow')}
               </p>
               <h1 className="text-[3.4rem] sm:text-7xl lg:text-[6.5rem] leading-[0.92] text-stone-900">
@@ -89,7 +89,7 @@ export default function Home() {
             {t('home.stats').map(({ value, label }) => (
               <div key={label}>
                 <dt className="sr-only">{label}</dt>
-                <dd className="font-display text-5xl md:text-6xl text-stone-900 leading-none">{value}</dd>
+                <dd className="font-display text-5xl md:text-6xl text-clay-600 leading-none">{value}</dd>
                 <p className="mt-3 text-sm text-stone-500">{label}</p>
               </div>
             ))}
@@ -98,7 +98,7 @@ export default function Home() {
       </section>
 
       {/* ─── Collections ─── */}
-      <section className="py-14 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-clay-50">
         <div className="container-page">
           <SectionHead
             eyebrow={t('home.collections.eyebrow')}
@@ -166,7 +166,7 @@ export default function Home() {
       </section>
 
       {/* ─── Process ─── */}
-      <section className="py-14 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-ochre-50">
         <div className="container-page">
           <SectionHead eyebrow={t('home.process.eyebrow')} title={t('home.process.title')} />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 md:gap-6">
@@ -176,7 +176,7 @@ export default function Home() {
                   <img src={processImages[i]} alt={title} loading="lazy" className="w-full h-full object-cover" />
                 </div>
                 <figcaption className="mt-4 md:mt-5 flex gap-4">
-                  <span className="text-xs text-stone-400 tabular-nums pt-1.5">0{i + 1}</span>
+                  <span className="grid place-items-center h-8 w-8 shrink-0 rounded-full bg-ochre-400 text-stone-900 text-xs font-semibold tabular-nums">0{i + 1}</span>
                   <div>
                     <p className="font-medium text-stone-900">{title}</p>
                     <p className="text-sm text-stone-500 mt-1 leading-relaxed">{text}</p>
@@ -201,7 +201,7 @@ export default function Home() {
           <ul className="lg:col-span-7 border-t border-stone-200 self-end">
             {t('home.reach.markets').map(({ country, role }) => (
               <li key={country} className="group flex items-center justify-between gap-4 py-4 md:py-5 border-b border-stone-200">
-                <span className="font-display text-2xl md:text-3xl text-stone-900 group-hover:translate-x-1 transition-transform">{country}</span>
+                <span className="font-display text-2xl md:text-3xl text-stone-900 group-hover:translate-x-1 group-hover:text-clay-600 transition">{country}</span>
                 <span className="text-sm text-stone-500 text-right">{role}</span>
               </li>
             ))}
@@ -229,15 +229,15 @@ export default function Home() {
       </section>
 
       {/* ─── Journey ─── */}
-      <section className="py-14 md:py-28 bg-white">
+      <section className="py-14 md:py-28 bg-forest-900 text-white [&_h2]:text-white [&_.eyebrow]:text-ochre-300">
         <div className="container-page">
           <SectionHead eyebrow={t('home.journey.eyebrow')} title={t('home.journey.title')} />
-          <ol className="border-t border-stone-200">
+          <ol className="border-t border-white/15">
             {t('home.journey.milestones').map(({ year, title, text }) => (
-              <li key={year} className="grid grid-cols-12 gap-x-4 gap-y-2 py-5 md:py-8 border-b border-stone-200">
-                <span className="col-span-12 md:col-span-3 font-display text-4xl text-clay-600 leading-none">{year}</span>
-                <span className="col-span-12 md:col-span-3 font-medium text-stone-900">{title}</span>
-                <span className="col-span-12 md:col-span-6 text-stone-500 leading-relaxed">{text}</span>
+              <li key={year} className="grid grid-cols-12 gap-x-4 gap-y-2 py-5 md:py-8 border-b border-white/15">
+                <span className="col-span-12 md:col-span-3 font-display text-4xl text-ochre-300 leading-none">{year}</span>
+                <span className="col-span-12 md:col-span-3 font-medium text-white">{title}</span>
+                <span className="col-span-12 md:col-span-6 text-white/70 leading-relaxed">{text}</span>
               </li>
             ))}
           </ol>
@@ -262,7 +262,7 @@ export default function Home() {
               {t('home.founder.quote')}
             </blockquote>
             <div className="mt-6 md:mt-10 flex items-center gap-4">
-              <span className="h-px w-10 bg-stone-300" />
+              <span className="h-px w-10 bg-clay-400" />
               <div>
                 <p className="font-medium text-stone-900">George Akologo</p>
                 <p className="text-sm text-stone-500">{t('home.founder.role')}</p>

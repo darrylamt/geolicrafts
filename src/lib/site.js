@@ -1,7 +1,7 @@
 // Business details used across the site — change them here once.
 export const SITE = {
-  email: 'info@geolicraftsgh.com',
-  phones: ['+233 289 553 203', '+233 244 099 243'],
+  email: 'geolicrafts@yahoo.com',
+  phones: ['+233 244 099 243'],
   // WhatsApp number in international format, digits only
   whatsapp: '233244099243',
   address: 'Dodowa, Greater Accra, Ghana',

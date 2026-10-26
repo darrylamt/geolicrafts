@@ -30,12 +30,12 @@ const social = 'grid place-items-center h-9 w-9 rounded-full ring-1 ring-white/1
 export default function Footer() {
   const { t } = useI18n()
   return (
-    <footer className="bg-stone-950 text-stone-400">
+    <footer className="bg-forest-950 text-stone-300">
       <div className="container-page pt-14 md:pt-20 pb-24 sm:pb-10">
         <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 lg:gap-12 pb-12 md:pb-16 border-b border-white/10">
           <div className="col-span-2 lg:col-span-6">
             <h2 className="font-display text-3xl md:text-5xl text-white leading-[1.05] max-w-md">
-              {t('footer.headline')} <em className="text-clay-300">{t('footer.headlineEm')}</em>
+              {t('footer.headline')} <em className="text-ochre-300">{t('footer.headlineEm')}</em>
             </h2>
             <div className="flex flex-wrap gap-2 mt-8">
               <Link to="/contact" className="btn-light">
